@@ -1,0 +1,831 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f6f8fb;
+  color: #172033;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(0, 71, 171, 0.08), transparent 320px),
+    #f6f8fb;
+  color: #172033;
+}
+
+.app.dark {
+  color-scheme: dark;
+  color: #eef4ff;
+  background:
+    linear-gradient(180deg, rgba(30, 58, 138, 0.45), transparent 340px),
+    #111827;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 14px clamp(16px, 3vw, 42px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(18px);
+  background: rgba(246, 248, 251, 0.82);
+}
+
+.dark .topbar {
+  background: rgba(17, 24, 39, 0.82);
+}
+
+.brand,
+.meta span,
+.company,
+.sectionTitle,
+.searchBand,
+.cardActions,
+.shareRow,
+.alertToggle,
+.primaryButton,
+.secondaryButton,
+.backButton,
+.appliedNotice,
+.detailStats span,
+.eyebrow {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand strong,
+.brand span {
+  display: block;
+}
+
+.brand span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.dark .brand span,
+.dark .resultHeader span,
+.dark .sourcePanel p,
+.dark .hero p,
+.dark .description,
+.dark .companyInfo p,
+.dark .resumePreview p {
+  color: #b8c4d8;
+}
+
+.brandIcon,
+.iconButton,
+.stat svg {
+  color: #0047ab;
+}
+
+nav {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+}
+
+.navButton,
+.iconButton,
+.primaryButton,
+.secondaryButton,
+.alertToggle,
+.backButton {
+  border: 0;
+  cursor: pointer;
+}
+
+.navButton {
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #475569;
+  background: transparent;
+}
+
+.navButton.active {
+  color: #fff;
+  background: #0047ab;
+}
+
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+main {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 26px clamp(14px, 2.5vw, 34px) 40px;
+}
+
+.hero {
+  min-height: 340px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) 430px;
+  align-items: center;
+  gap: 28px;
+  padding: clamp(26px, 5vw, 58px) 0;
+}
+
+.eyebrow {
+  gap: 8px;
+  width: fit-content;
+  color: #0f5fbd;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-size: clamp(36px, 5vw, 66px);
+  line-height: 1.02;
+  margin: 0;
+  max-width: 880px;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 720px;
+  color: #4b5563;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.heroStats,
+.metricGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.heroStats {
+  grid-template-columns: 1fr;
+}
+
+.stat {
+  min-height: 104px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.stat span {
+  display: block;
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.stat strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 26px;
+}
+
+.searchBand {
+  gap: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08);
+}
+
+.liveStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -8px 0 20px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbe4ef;
+  background: #fff;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.liveStatus span {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.liveStatus.live span {
+  color: #047857;
+  background: #dcfce7;
+}
+
+.liveStatus.fallback span {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.liveStatus.empty span {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.searchBox input,
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: inherit;
+  background: transparent;
+}
+
+.alertToggle,
+.searchButton,
+.primaryButton,
+.secondaryButton,
+.backButton {
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.alertToggle {
+  background: #fff7ed;
+  color: #9a4c00;
+  border: 1px solid #fed7aa;
+}
+
+.searchButton {
+  color: #fff;
+  background: #0047ab;
+}
+
+.alertToggle.on,
+.primaryButton {
+  color: #fff;
+  background: #ff8c00;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 290px minmax(360px, 1fr) minmax(340px, 440px);
+  gap: 18px;
+  align-items: start;
+}
+
+.filters,
+.detail,
+.insight,
+.resumeForm,
+.resumePreview,
+.marketPanel,
+.prepGrid article,
+.blogBand {
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+}
+
+.filters,
+.detail {
+  position: sticky;
+  top: 88px;
+  padding: 16px;
+}
+
+.sectionTitle {
+  gap: 8px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.field span {
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.field input,
+.field select,
+.field textarea {
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbe4ef;
+  background: #f8fafc;
+}
+
+.field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.sourcePanel {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.sourcePanel p,
+.resultHeader span {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sourceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.sourceGrid span,
+.tagRow span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sourceGrid span.sourceOk {
+  color: #047857;
+  background: #dcfce7;
+}
+
+.sourceGrid span.sourceOff {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.results {
+  min-width: 0;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.resultHeader strong,
+.resultHeader span {
+  display: block;
+}
+
+.jobList {
+  display: grid;
+  gap: 12px;
+}
+
+.jobCard {
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.jobCard:hover,
+.jobCard.selected {
+  transform: translateY(-2px);
+  border-color: rgba(0, 71, 171, 0.45);
+  box-shadow: 0 16px 38px rgba(0, 71, 171, 0.12);
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.jobCard h2,
+.detailTitle h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.company {
+  gap: 6px;
+  color: #475569;
+  font-weight: 700;
+}
+
+.meta,
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.meta span {
+  gap: 5px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.jobCard p {
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.sourceBadge.direct {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.sourceBadge.portal {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.sourceBadge.govt {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.sourceBadge.special {
+  background: #fef3c7;
+  color: #a16207;
+}
+
+.cardActions {
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.secondaryButton,
+.backButton {
+  color: #172033;
+  background: #f8fafc;
+  border: 1px solid #dbe4ef;
+  text-decoration: none;
+}
+
+.detail {
+  max-height: calc(100vh - 108px);
+  overflow: auto;
+}
+
+.backButton {
+  margin-bottom: 14px;
+}
+
+.detailTitle p {
+  margin: 0;
+  color: #64748b;
+}
+
+.detailStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.detailStats span {
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.description,
+.companyInfo p {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.detailList {
+  margin-top: 16px;
+}
+
+.detailList ul,
+.insight ul {
+  padding-left: 20px;
+  line-height: 1.8;
+}
+
+.detailList.compact ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.detailList.compact li {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.applyPanel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.primaryButton {
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.shareRow {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.shareRow a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #0047ab;
+  background: #eff6ff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.appliedNotice {
+  gap: 8px;
+  margin-top: 14px;
+  color: #047857;
+  font-weight: 800;
+}
+
+.emptyState,
+.emptyDetail {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  min-height: 220px;
+  color: #64748b;
+}
+
+.dashboard,
+.prep {
+  display: grid;
+  gap: 18px;
+}
+
+.metricGrid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.insight,
+.marketPanel,
+.blogBand {
+  padding: 18px;
+}
+
+.marketPanel p {
+  color: #475569;
+  line-height: 1.65;
+}
+
+.resume {
+  display: grid;
+  grid-template-columns: minmax(280px, 430px) 1fr;
+  gap: 18px;
+}
+
+.resumeForm,
+.resumePreview {
+  padding: 18px;
+}
+
+.resumePreview {
+  min-height: 420px;
+}
+
+.resumeLine,
+.resumeBlock {
+  height: 18px;
+  margin-top: 18px;
+  border-radius: 6px;
+  background: #e2e8f0;
+}
+
+.resumeLine.wide {
+  width: 82%;
+}
+
+.resumeLine {
+  width: 66%;
+}
+
+.resumeLine.short {
+  width: 44%;
+}
+
+.resumeBlock {
+  width: 100%;
+  height: 190px;
+}
+
+.prepGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.prepGrid article {
+  padding: 18px;
+  line-height: 1.6;
+}
+
+.blogBand {
+  display: grid;
+  gap: 8px;
+}
+
+.blogBand span {
+  color: #64748b;
+}
+
+.dark .stat,
+.dark .searchBand,
+.dark .liveStatus,
+.dark .filters,
+.dark .detail,
+.dark .jobCard,
+.dark .insight,
+.dark .resumeForm,
+.dark .resumePreview,
+.dark .marketPanel,
+.dark .prepGrid article,
+.dark .blogBand,
+.dark .iconButton {
+  background: #1f2937;
+  border-color: rgba(148, 163, 184, 0.22);
+}
+
+.dark .searchBox,
+.dark .field input,
+.dark .field select,
+.dark .field textarea,
+.dark .secondaryButton,
+.dark .backButton,
+.dark .detailStats span {
+  background: #111827;
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #eef4ff;
+}
+
+.dark .jobCard p,
+.dark .company,
+.dark .meta span,
+.dark .field span,
+.dark .marketPanel p,
+.dark .blogBand span {
+  color: #b8c4d8;
+}
+
+@media (max-width: 1180px) {
+  .workspace {
+    grid-template-columns: 270px 1fr;
+  }
+
+  .detail {
+    grid-column: 1 / -1;
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .topbar,
+  .hero,
+  .workspace,
+  .resume,
+  .insightGrid,
+  .metricGrid,
+  .prepGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    position: static;
+  }
+
+  nav,
+  .searchBand,
+  .resultHeader,
+  .applyPanel {
+    width: 100%;
+  }
+
+  nav,
+  .searchBand,
+  .resultHeader {
+    flex-wrap: wrap;
+  }
+
+  .filters {
+    position: static;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 540px) {
+  main {
+    padding-inline: 12px;
+  }
+
+  .navButton {
+    flex: 1;
+    padding-inline: 8px;
+  }
+
+  .cardActions,
+  .applyPanel {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .searchButton,
+  .alertToggle {
+    width: 100%;
+  }
+}

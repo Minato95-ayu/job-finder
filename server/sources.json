@@ -1,0 +1,45 @@
+{
+  "greenhouse": [
+    {
+      "name": "Greenhouse Demo",
+      "board": "airbnb",
+      "enabled": false
+    }
+  ],
+  "lever": [
+    {
+      "name": "Lever Demo",
+      "site": "netlify",
+      "enabled": false
+    }
+  ],
+  "rss": [
+    {
+      "name": "Employment News RSS",
+      "url": "https://www.employmentnews.gov.in/NewEmp/Home.aspx",
+      "enabled": false
+    }
+  ],
+  "publicWebQueries": [
+    {
+      "name": "Company Careers Public Web",
+      "query": "India company careers jobs software engineer startup hiring",
+      "enabled": true
+    },
+    {
+      "name": "Hackathons Datathons Public Web",
+      "query": "India hackathon datathon internship hiring students college",
+      "enabled": true
+    },
+    {
+      "name": "Placement Questions Public Web",
+      "query": "campus placement questions interview experience India engineering college",
+      "enabled": true
+    },
+    {
+      "name": "Public LinkedIn Pages Search",
+      "query": "site:linkedin.com/jobs India hiring fresher software engineer",
+      "enabled": true
+    }
+  ]
+}
