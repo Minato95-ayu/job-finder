@@ -6,10 +6,34 @@ import * as cheerio from "cheerio";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import Database from "better-sqlite3";
+import cron from "node-cron";
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Initialize Database
+const db = new Database(join(__dirname, "jobs.db"));
+db.exec(`
+  CREATE TABLE IF NOT EXISTS jobs (
+    id TEXT PRIMARY KEY,
+    title TEXT,
+    company TEXT,
+    category TEXT,
+    location TEXT,
+    state TEXT,
+    type TEXT,
+    experience TEXT,
+    postedDays INTEGER,
+    source TEXT,
+    sourceKind TEXT,
+    description TEXT,
+    applyUrl TEXT,
+    skills TEXT,
+    fetchedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 const xmlParser = new XMLParser({ ignoreAttributes: false });
 
 app.use(cors({ origin: ["http://127.0.0.1:5173", "http://localhost:5173"] }));
@@ -143,6 +167,50 @@ function uniqueJobs(jobs) {
     return true;
   });
 }
+
+function saveJobsToDb(jobs) {
+  const insert = db.prepare(`
+    INSERT OR REPLACE INTO jobs (
+      id, title, company, category, location, state, type, experience, 
+      postedDays, source, sourceKind, description, applyUrl, skills
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const transaction = db.transaction((jobList) => {
+    for (const job of jobList) {
+      insert.run(
+        job.id, job.title, job.company, job.category, job.location, job.state,
+        job.type, job.experience, job.postedDays, job.source, job.sourceKind,
+        job.description, job.applyUrl, JSON.stringify(job.skills)
+      );
+    }
+  });
+
+  transaction(jobs);
+  console.log(`[DB] Saved/Updated ${jobs.length} jobs`);
+}
+
+async function backgroundScrape(query = "jobs", location = "India") {
+  console.log(`[Cron] Starting background scrape for: ${query} in ${location}`);
+  const runners = await buildSourceRunners(query, location);
+  const enabledRunners = runners.filter((runner) => runner.enabled);
+  
+  const results = await Promise.allSettled(enabledRunners.map(r => r.run()));
+  const allJobs = results.flatMap(r => r.status === "fulfilled" ? r.value : []);
+  const cleanJobs = uniqueJobs(allJobs);
+  
+  saveJobsToDb(cleanJobs);
+}
+
+// Schedule background scrape every hour
+cron.schedule("0 * * * *", () => {
+  backgroundScrape("Software Engineer", "India");
+  backgroundScrape("Web Developer", "India");
+  backgroundScrape("Management", "India");
+});
+
+// Run an initial scrape on startup after 5 seconds
+setTimeout(() => backgroundScrape("jobs", "India"), 5000);
 
 function toAppJob(raw, source, sourceKind) {
   const title = cleanHtml(raw.title || raw.job_title || "Job opening");
@@ -573,35 +641,25 @@ function applyFilters(jobs, query, category, experience, type, location, posted)
 
 app.get("/api/jobs", async (request, response) => {
   const { query = "", category = "All", experience = "All", type = "All", location = "All", posted = "30" } = request.query;
-  const queryText = String(query || "").trim();
-  const categoryText = String(category || "").trim();
-  const search = queryText || (categoryText && categoryText !== "All" ? categoryText : "");
-  const runners = await buildSourceRunners(search, String(location));
-  const enabledRunners = runners.filter((runner) => runner.enabled);
-  console.log(`[API] Searching ${enabledRunners.length} enabled sources for: "${search}"`);
-  const results = await Promise.allSettled(enabledRunners.map((runner) => runner.run()));
+  
+  // Try to get from DB first
+  const dbJobs = db.prepare("SELECT * FROM jobs ORDER BY fetchedAt DESC").all().map(job => ({
+    ...job,
+    skills: JSON.parse(job.skills || "[]")
+  }));
 
-  const jobs = uniqueJobs(results.flatMap((result) => (result.status === "fulfilled" ? result.value : [])));
+  const filteredJobs = applyFilters(dbJobs, query, category, experience, type, location, posted);
+
+  // If we have few results, trigger a background scrape for this query
+  if (filteredJobs.length < 5) {
+    backgroundScrape(String(query || "jobs"), String(location || "India"));
+  }
+
   response.json({
-    jobs: applyFilters(jobs, query, category, experience, type, location, posted).slice(0, 80),
+    jobs: filteredJobs.slice(0, 80),
     fetchedAt: new Date().toISOString(),
-    sources: enabledRunners.map((runner, index) => {
-      const result = results[index];
-      return {
-        name: runner.name,
-        type: runner.type,
-        ok: result.status === "fulfilled",
-        count: result.status === "fulfilled" ? result.value.length : 0,
-        error: result.status === "rejected" ? result.reason.message : null,
-      };
-    }),
-    disabledSources: runners.filter((runner) => !runner.enabled).map((runner) => ({ name: runner.name, type: runner.type })),
-    needsApiKey:
-      !process.env.JSEARCH_API_KEY ||
-      !process.env.ADZUNA_APP_ID ||
-      !process.env.JOOBLE_API_KEY ||
-      !process.env.GOOGLE_CSE_API_KEY ||
-      !process.env.GOOGLE_CSE_CX,
+    totalInDb: dbJobs.length,
+    note: "Results served from local autonomous database. Fresh data is fetched in background."
   });
 });
 

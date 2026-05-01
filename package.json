@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",
+    "better-sqlite3": "^12.9.0",
     "cheerio": "^1.2.0",
     "concurrently": "^9.0.0",
     "cors": "^2.8.5",
@@ -19,6 +20,7 @@
     "express": "^4.21.2",
     "fast-xml-parser": "^4.5.0",
     "lucide-react": "^0.468.0",
+    "node-cron": "^4.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.8.0",

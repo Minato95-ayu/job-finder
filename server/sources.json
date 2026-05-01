@@ -15,15 +15,30 @@
   ],
   "rss": [
     {
-      "name": "Employment News RSS",
+      "name": "NCS India Government",
+      "url": "https://www.ncs.gov.in/_layouts/15/ncsp/RssFeed.aspx?Source=Jobs",
+      "enabled": true
+    },
+    {
+      "name": "Employment News India",
       "url": "https://www.employmentnews.gov.in/NewEmp/Home.aspx",
-      "enabled": false
+      "enabled": true
+    },
+    {
+      "name": "Prasar Bharati Jobs",
+      "url": "https://prasarbharati.gov.in/category/vacancies/feed/",
+      "enabled": true
     }
   ],
   "publicWebQueries": [
     {
-      "name": "Company Careers Public Web",
-      "query": "India company careers jobs software engineer startup hiring",
+      "name": "Daily Career News",
+      "query": "site:indiatimes.com \"hiring\" OR \"recruitment\" OR \"jobs\" software engineering",
+      "enabled": true
+    },
+    {
+      "name": "Startup Hiring News India",
+      "query": "site:yourstory.com \"hiring\" OR \"raises series\" software engineer",
       "enabled": true
     },
     {
