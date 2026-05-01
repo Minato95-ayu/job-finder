@@ -126,6 +126,54 @@
         "link": "a"
       },
       "enabled": true
+    },
+    {
+      "name": "Jooble India",
+      "url": "https://in.jooble.org/SearchResult?ukw={query}&rg={location}",
+      "container": "article.job-card",
+      "selectors": {
+        "title": "h2.job-card__title",
+        "company": "div.job-card__company",
+        "location": "div.job-card__location",
+        "link": "h2.job-card__title a"
+      },
+      "enabled": true
+    },
+    {
+      "name": "Careerjet India",
+      "url": "https://www.careerjet.co.in/search/jobs?s={query}&l={location}",
+      "container": "article.job",
+      "selectors": {
+        "title": "h2 a",
+        "company": "p.company",
+        "location": "ul.location",
+        "link": "h2 a"
+      },
+      "enabled": true
+    },
+    {
+      "name": "SimplyHired India",
+      "url": "https://www.simplyhired.co.in/search?q={query}&l={location}",
+      "container": "li.list-item",
+      "selectors": {
+        "title": "h3",
+        "company": "span[data-testimonial-auth]",
+        "location": "span.job-location",
+        "link": "a"
+      },
+      "enabled": true
+    },
+    {
+      "name": "JobisJob India",
+      "url": "https://www.jobisjob.co.in/search?q={query}&l={location}",
+      "container": "li.job",
+      "selectors": {
+        "title": "h2 a",
+        "company": "span.company",
+        "location": "span.location",
+        "link": "h2 a"
+      },
+      "enabled": true
     }
   ]
 }
