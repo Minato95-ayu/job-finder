@@ -715,10 +715,20 @@ app.get("/api/jobs", async (request, response) => {
     backgroundScrape(String(query || "jobs"), String(location || "India"));
   }
 
+  // Build source summary for frontend display
+  const sourceGroups = {};
+  filteredJobs.forEach(job => {
+    if (!sourceGroups[job.source]) sourceGroups[job.source] = { name: job.source, count: 0, ok: true, error: null };
+    sourceGroups[job.source].count++;
+  });
+  const sourceSummary = Object.values(sourceGroups);
+
   response.json({
     jobs: filteredJobs.slice(0, 80),
     fetchedAt: new Date().toISOString(),
     totalInDb: dbJobs.length,
+    sources: sourceSummary,
+    needsApiKey: false,
     note: "Results served from local autonomous database. Fresh data is fetched in background."
   });
 });
