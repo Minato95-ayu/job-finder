@@ -48,27 +48,32 @@
     },
     {
       "name": "Naukri Public Search",
-      "query": "site:naukri.com \"Software Engineer\" jobs in Bangalore",
+      "query": "site:naukri.com \"{query}\" jobs in {location}",
       "enabled": true
     },
     {
       "name": "Indeed India Public",
-      "query": "site:indeed.com \"Hiring\" India jobs",
+      "query": "site:indeed.com \"{query}\" in {location}",
       "enabled": true
     },
     {
-      "name": "AngelList India",
-      "query": "site:wellfound.com \"Software Engineer\" India startup",
+      "name": "Direct School Jobs Search",
+      "query": "site:*.edu.in OR site:*.com \"hiring\" teacher OR principal OR \"staff\" {location}",
       "enabled": true
     },
     {
-      "name": "Glassdoor India Jobs",
-      "query": "site:glassdoor.co.in \"Software Engineer\" India",
+      "name": "Company Career Portals",
+      "query": "site:*/careers OR site:*/jobs \"hiring\" {query} India",
       "enabled": true
     },
     {
-      "name": "GitHub Jobs India",
-      "query": "site:github.com \"hiring\" India remote",
+      "name": "Hospital & Doctor Jobs",
+      "query": "site:*.in \"recruitment\" OR \"vacancy\" doctor OR nurse OR \"medical staff\" {location}",
+      "enabled": true
+    },
+    {
+      "name": "SarkariExam Govt Notifications",
+      "query": "site:sarkariexam.com \"latest jobs\" 2026",
       "enabled": true
     }
   ],
