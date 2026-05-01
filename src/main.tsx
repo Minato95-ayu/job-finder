@@ -249,10 +249,10 @@ function App() {
     <div className={darkMode ? "app dark" : "app"}>
       <header className="topbar">
         <div className="brand">
-          <span className="brandIcon"><BriefcaseBusiness size={22} /></span>
+          <img src="/logo.svg" alt="India Job Finder Logo" style={{ width: 42, height: 42, borderRadius: 10 }} />
           <div>
             <strong>India Job Finder</strong>
-            <span>Multi-source job search for Indian candidates</span>
+            <span>Live job search for Indian candidates</span>
           </div>
         </div>
         <div style={{ flex: 1 }} />
