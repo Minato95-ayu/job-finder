@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="96" fill="url(#bg)"/>
+  <!-- Briefcase body -->
+  <rect x="42" y="82" width="116" height="82" rx="10" ry="10" fill="white" opacity="0.95"/>
+  <!-- Briefcase handle -->
+  <path d="M76 82 L76 68 Q76 58 88 58 L112 58 Q124 58 124 68 L124 82" stroke="white" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.95"/>
+  <!-- Center divider line -->
+  <rect x="42" y="118" width="116" height="6" fill="url(#accent)" opacity="0.9"/>
+  <!-- Latch -->
+  <rect x="88" y="110" width="24" height="14" rx="7" fill="url(#accent)"/>
+  <!-- Saffron top stripe -->
+  <rect x="4" y="4" width="192" height="12" rx="6" fill="#f97316" opacity="0.85"/>
+  <!-- Green bottom stripe -->
+  <rect x="4" y="184" width="192" height="12" rx="6" fill="#138808" opacity="0.85"/>
+</svg>
