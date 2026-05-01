@@ -222,19 +222,20 @@
         "title": "span[data-aut-id='itemTitle']",
         "company": "span[data-aut-id='itemDetails']",
         "location": "span[data-aut-id='itemLocation']",
-        "link": "a"
+        "link": "a",
+        "salary": "span[data-aut-id='itemPrice']"
       },
       "enabled": true
     },
     {
-      "name": "TeachingIndia",
-      "url": "https://www.teachingjobsindia.com/search?q={query}&l={location}",
-      "container": "div.job-item",
+      "name": "TeacherOn",
+      "url": "https://www.teacheron.com/teacher-jobs-in-{location}",
+      "container": "div.job-row",
       "selectors": {
-        "title": "h3",
-        "company": "div.company",
+        "title": "h2 a",
+        "company": "div.posted-by",
         "location": "div.location",
-        "link": "a"
+        "link": "h2 a"
       },
       "enabled": true
     }
