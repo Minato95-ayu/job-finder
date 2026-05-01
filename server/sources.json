@@ -41,5 +41,35 @@
       "query": "site:linkedin.com/jobs India hiring fresher software engineer",
       "enabled": true
     }
+  ],
+  "scrapers": [
+    {
+      "name": "TimesJobs India",
+      "url": "https://www.timesjobs.com/candidate/job-search.html?from=submit&searchTextFull={query}&searchType=personalizedSearch&luceneResultSize=25&postWeek=60&txtLocation={location}",
+      "container": "li.clearfix.job-bx",
+      "selectors": {
+        "title": "h2 a",
+        "company": "h3.joblist-comp-name",
+        "location": "span",
+        "link": "h2 a",
+        "description": "ul.list-job-dtl",
+        "posted": "span.sim-posted"
+      },
+      "enabled": true
+    },
+    {
+      "name": "FoundIt India",
+      "url": "https://www.foundit.in/srp/results?query={query}&locations={location}",
+      "container": ".job-item",
+      "selectors": {
+        "title": ".job-title",
+        "company": ".company-name",
+        "location": ".location",
+        "link": "a",
+        "description": ".job-description"
+      },
+      "enabled": false
+    }
   ]
 }
+

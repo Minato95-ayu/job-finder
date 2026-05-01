@@ -2,6 +2,7 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import { XMLParser } from "fast-xml-parser";
+import * as cheerio from "cheerio";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,7 +40,7 @@ async function loadSourceConfig() {
     const raw = await readFile(join(__dirname, "sources.json"), "utf8");
     return JSON.parse(raw);
   } catch {
-    return { greenhouse: [], lever: [], rss: [] };
+    return { greenhouse: [], lever: [], rss: [], scrapers: [] };
   }
 }
 
@@ -110,7 +111,11 @@ function hasIndiaSignal(job) {
 function uniqueJobs(jobs) {
   const seen = new Set();
   return jobs.filter((job) => {
-    const key = `${job.title}-${job.company}-${job.applyUrl}`.toLowerCase();
+    // Normalize title and company for better deduplication across different sources
+    const cleanTitle = job.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const cleanCompany = job.company.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const key = `${cleanTitle}-${cleanCompany}`;
+    
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -231,13 +236,62 @@ async function fetchText(url, options = {}) {
   const response = await fetch(url, {
     ...options,
     headers: {
-      "User-Agent": "IndiaJobFinder/1.0",
-      Accept: "application/xml,text/xml,text/html,application/json",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
       ...(options.headers || {}),
     },
   });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
   return response.text();
+}
+
+async function fetchScraped(source, query, location) {
+  if (!source.enabled || !source.url) return [];
+
+  const searchUrl = source.url
+    .replace("{query}", encodeURIComponent(query || "jobs"))
+    .replace("{location}", encodeURIComponent(location && location !== "All" ? location : "India"));
+
+  try {
+    const html = await fetchText(searchUrl);
+    const $ = cheerio.load(html);
+    const jobs = [];
+
+    $(source.container).each((_, element) => {
+      const el = $(element);
+      const title = el.find(source.selectors.title).text().trim();
+      const company = el.find(source.selectors.company).text().trim();
+      const jobLocation = el.find(source.selectors.location).text().trim();
+      let link = el.find(source.selectors.link).attr("href");
+
+      if (link && !link.startsWith("http")) {
+        const base = new URL(searchUrl).origin;
+        link = new URL(link, base).href;
+      }
+
+      if (title && company) {
+        jobs.push(
+          toAppJob(
+            {
+              title,
+              company,
+              location: jobLocation,
+              url: link,
+              description: el.find(source.selectors.description).text().trim(),
+              date: el.find(source.selectors.posted).text().trim(),
+            },
+            source.name,
+            "Web Scraper"
+          )
+        );
+      }
+    });
+
+    return jobs;
+  } catch (error) {
+    console.error(`Scraper error for ${source.name}:`, error.message);
+    throw error;
+  }
 }
 
 async function fetchArbeitnow() {
@@ -428,6 +482,12 @@ async function buildSourceRunners(query, location) {
       type: "Google Programmable Search",
       enabled: Boolean(source.enabled && process.env.GOOGLE_CSE_API_KEY && process.env.GOOGLE_CSE_CX),
       run: () => fetchGoogleCse(source, query),
+    })),
+    ...(config.scrapers || []).map((source) => ({
+      name: source.name,
+      type: "Web Scraper Engine",
+      enabled: Boolean(source.enabled),
+      run: () => fetchScraped(source, query, location),
     })),
   ];
 }
