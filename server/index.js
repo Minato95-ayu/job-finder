@@ -101,9 +101,17 @@ function cleanHtml(value = "") {
 }
 
 function cityStateFromLocation(value = "") {
-  const location = cleanHtml(value) || "Remote";
-  const first = location.split(",")[0]?.trim() || "Remote";
+  let location = cleanHtml(value) || "Remote";
   const lower = location.toLowerCase();
+  
+  // Normalize common Indian city names
+  if (lower.includes("bangalore") || lower.includes("bengaluru")) location = "Bengaluru";
+  if (lower.includes("gurgaon") || lower.includes("gurugram")) location = "Gurugram";
+  if (lower.includes("bombay") || lower.includes("mumbai")) location = "Mumbai";
+  if (lower.includes("madras") || lower.includes("chennai")) location = "Chennai";
+  if (lower.includes("calcutta") || lower.includes("kolkata")) location = "Kolkata";
+
+  const first = location.split(",")[0]?.trim() || "Remote";
   if (lower.includes("india")) return { location: first, state: "India" };
   if (/(worldwide|anywhere|global)/i.test(lower)) return { location: first, state: "Global remote" };
   if (lower.includes("remote")) return { location: "Remote", state: "Pan India" };
@@ -287,7 +295,13 @@ async function fetchScraped(source, query, location) {
 
     $(source.container).each((_, element) => {
       const el = $(element);
-      const title = el.find(source.selectors.title).text().trim();
+      let title = el.find(source.selectors.title).text().trim();
+      
+      // Clean up Freshersworld's verbose titles
+      if (source.name === "Freshersworld" && title.includes(" Jobs Opening in ")) {
+        title = title.split(" Jobs Opening in ")[0];
+      }
+
       const company = el.find(source.selectors.company).text().trim();
       const jobLocation = el.find(source.selectors.location).text().trim();
       let link = el.find(source.selectors.link).attr("href");
@@ -523,15 +537,35 @@ async function buildSourceRunners(query, location) {
 
 function applyFilters(jobs, query, category, experience, type, location, posted) {
   const q = String(query || "").trim().toLowerCase();
+  const queryWords = q.split(/\s+/).filter(w => w.length > 2);
+  const loc = String(location || "All").toLowerCase();
   const maxPosted = Number(posted || 30);
+
   return jobs.filter((job) => {
     const text = `${job.title} ${job.company} ${job.location} ${job.state} ${job.category} ${job.source} ${job.description} ${job.skills.join(" ")}`.toLowerCase();
+    
+    // Fuzzy word matching for query
+    const matchesQuery = !q || queryWords.every(word => text.includes(word)) || text.includes(q);
+    
+    // Location matching with normalization
+    let matchesLocation = true;
+    if (loc !== "all") {
+      const jobLoc = job.location.toLowerCase();
+      const jobState = job.state.toLowerCase();
+      const isBangalore = loc.includes("bangalore") || loc.includes("bengaluru");
+      const isGurgaon = loc.includes("gurgaon") || loc.includes("gurugram");
+      
+      if (isBangalore) matchesLocation = jobLoc.includes("bangalore") || jobLoc.includes("bengaluru");
+      else if (isGurgaon) matchesLocation = jobLoc.includes("gurgaon") || jobLoc.includes("gurugram");
+      else matchesLocation = jobLoc.includes(loc) || jobState.includes(loc);
+    }
+
     return (
-      (!q || text.includes(q)) &&
+      matchesQuery &&
       (!category || category === "All" || job.category === category) &&
       (!experience || experience === "All" || job.experience === experience) &&
       (!type || type === "All" || job.type === type) &&
-      (!location || location === "All" || job.location.toLowerCase().includes(String(location).toLowerCase())) &&
+      matchesLocation &&
       job.postedDays <= maxPosted
     );
   });
