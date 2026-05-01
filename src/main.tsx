@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import "./styles.css";
 
-type Category = "Engineer" | "Teacher" | "Cashier" | "IT" | "HR" | "Sales" | "Marketing" | "Government";
+type Category = "Engineer" | "Teacher" | "Doctor" | "IT" | "HR" | "Sales" | "Marketing" | "Government" | "Housekeeping" | "Driver" | "Delivery" | "Security";
 type Experience = "Fresher" | "1-3 years" | "3-5 years" | "5+ years";
 type JobType = "Full-time" | "Part-time" | "Contract" | "Freelance";
 type SourceKind = "Direct Company" | "Job Portal" | "Government" | "Specialized";
@@ -100,7 +100,7 @@ const sources = [
   "Startup job boards",
 ];
 
-const categories: Category[] = ["Engineer", "Teacher", "Cashier", "IT", "HR", "Sales", "Marketing", "Government"];
+const categories: Category[] = ["Engineer", "Teacher", "Doctor", "IT", "HR", "Sales", "Marketing", "Government", "Housekeeping", "Driver", "Delivery", "Security"];
 const experiences: Experience[] = ["Fresher", "1-3 years", "3-5 years", "5+ years"];
 const jobTypes: JobType[] = ["Full-time", "Part-time", "Contract", "Freelance"];
 const cityOptions = ["All", "Bengaluru", "Delhi", "Mumbai", "Hyderabad", "Pune", "Chennai", "Gurugram", "Ahmedabad", "Lucknow", "Remote"];

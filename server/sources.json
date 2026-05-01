@@ -208,6 +208,30 @@
         "link": "h2 a"
       },
       "enabled": true
+    },
+    {
+      "name": "OLX Jobs India",
+      "url": "https://www.olx.in/jobs_c4/q-{query}-in-{location}",
+      "container": "li[data-aut-id='itemBox']",
+      "selectors": {
+        "title": "span[data-aut-id='itemTitle']",
+        "company": "span[data-aut-id='itemDetails']",
+        "location": "span[data-aut-id='itemLocation']",
+        "link": "a"
+      },
+      "enabled": true
+    },
+    {
+      "name": "TeachingIndia",
+      "url": "https://www.teachingjobsindia.com/search?q={query}&l={location}",
+      "container": "div.job-item",
+      "selectors": {
+        "title": "h3",
+        "company": "div.company",
+        "location": "div.location",
+        "link": "a"
+      },
+      "enabled": true
     }
   ]
 }
