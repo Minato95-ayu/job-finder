@@ -81,24 +81,24 @@
     {
       "name": "TimesJobs India",
       "url": "https://www.timesjobs.com/candidate/job-search.html?from=submit&searchTextFull={query}&searchType=personalizedSearch&luceneResultSize=25&postWeek=60&txtLocation={location}",
-      "container": "div.relative.bg-white.rounded-lg",
+      "container": "div.job-items, li.clearfix",
       "selectors": {
-        "title": "h2",
-        "company": "p",
-        "location": "div.text-sm",
-        "link": "a.absolute",
-        "description": "div.mt-4",
-        "posted": "p.text-xs"
+        "title": "h2, h3",
+        "company": "h3.joblist-comp-name",
+        "location": "span.location-name",
+        "link": "a.absolute, a[href*='job-detail']",
+        "description": "ul.list-job-dtl",
+        "posted": "span.sim-posted"
       },
       "enabled": true
     },
     {
       "name": "FoundIt India",
       "url": "https://www.foundit.in/srp/results?query={query}&locations={location}",
-      "container": "div.srpResultCard",
+      "container": "div.srpCard",
       "selectors": {
         "title": "div.jobTitle",
-        "company": "p.companyName",
+        "company": "div.companyName",
         "location": "div.location",
         "link": "div.jobTitle a",
         "description": "div.jobDescription"
@@ -121,12 +121,12 @@
     {
       "name": "Shine India",
       "url": "https://www.shine.com/job-search/{query}-jobs-in-{location}",
-      "container": "div[class*='jobCard_jobCard']",
+      "container": "div[class*='jobCard']",
       "selectors": {
-        "title": "h2[class*='jobCard_jobCard_features_title'] a",
-        "company": "div[class*='jobCard_jobCard_c__companyName']",
-        "location": "div[class*='jobCard_jobCard_lists_item']",
-        "link": "h2[class*='jobCard_jobCard_features_title'] a"
+        "title": "h2[class*='jobCard'] a",
+        "company": "div[class*='companyName']",
+        "location": "div[class*='location']",
+        "link": "a[href*='/jobs/']"
       },
       "enabled": true
     },
@@ -192,7 +192,7 @@
     },
     {
       "name": "Quikr Jobs India",
-      "url": "https://www.quikr.com/jobs/{query}+in+{location}",
+      "url": "https://www.quikr.com/jobs/search?q={query}&l={location}",
       "container": "div.job-card",
       "selectors": {
         "title": "a.job-title",
@@ -216,7 +216,7 @@
     },
     {
       "name": "OLX Jobs India",
-      "url": "https://www.olx.in/jobs_c4/q-{query}-in-{location}",
+      "url": "https://www.olx.in/jobs_c4/q-{query}",
       "container": "li[data-aut-id='itemBox']",
       "selectors": {
         "title": "span[data-aut-id='itemTitle']",
