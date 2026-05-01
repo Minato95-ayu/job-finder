@@ -543,13 +543,7 @@ function App() {
             <span>Multi-source job search for Indian candidates</span>
           </div>
         </div>
-        <nav>
-          {(["jobs", "dashboard", "resume", "prep"] as const).map((panel) => (
-            <button key={panel} className={activePanel === panel ? "navButton active" : "navButton"} onClick={() => setActivePanel(panel)}>
-              {panel === "jobs" ? "Jobs" : panel === "prep" ? "Interview" : panel[0].toUpperCase() + panel.slice(1)}
-            </button>
-          ))}
-        </nav>
+        <div style={{ flex: 1 }} />
         <button className="iconButton" title="Toggle dark mode" onClick={() => setDarkMode((value) => !value)}>
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
@@ -664,14 +658,6 @@ function App() {
             <JobDetails job={selectedJob} saved={saved} applied={applied} onBack={() => setSelectedJob(null)} onSave={toggleSaved} onApply={markApplied} />
           </section>
         )}
-
-        {activePanel === "dashboard" && (
-          <Dashboard saved={saved} applied={applied} trending={trending} popularCompanies={popularCompanies} topCities={topCities} />
-        )}
-
-        {activePanel === "resume" && <ResumeBuilder />}
-
-        {activePanel === "prep" && <InterviewPrep />}
       </main>
 
       <footer className="footer">
@@ -808,142 +794,6 @@ function DetailList({ title, items, compact = false }: { title: string; items: s
       <strong>{title}</strong>
       <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>
     </div>
-  );
-}
-
-function Dashboard({ saved, applied, trending, popularCompanies, topCities }: { saved: string[]; applied: string[]; trending: Job[]; popularCompanies: Job[]; topCities: { city: string; count: number }[] }) {
-  return (
-    <section className="dashboard">
-      <div className="metricGrid">
-        <Stat icon={<Bookmark />} label="Saved jobs" value={String(saved.length)} />
-        <Stat icon={<CheckCircle2 />} label="Applied jobs" value={String(applied.length)} />
-        <Stat icon={<Bell />} label="Active alerts" value="3" />
-        <Stat icon={<ChartNoAxesColumnIncreasing />} label="Search to apply" value="18%" />
-      </div>
-      <div className="insightGrid">
-        <Insight title="Trending jobs" icon={<TrendingUp />} items={trending.map((job) => `${job.title} · ${job.company}`)} />
-        <Insight title="Popular companies" icon={<Building2 />} items={popularCompanies.map((job) => `${job.company} · ${job.rating}/5`)} />
-        <Insight title="Top hiring cities" icon={<MapPin />} items={topCities.map((city) => `${city.city} · ${city.count || 1} active categories`)} />
-        <Insight title="Salary insights" icon={<IndianRupee />} items={["Software engineer: 8-24 LPA", "PGT teacher: 4-9 LPA", "Bank cashier: 3-6 LPA", "Operations manager: 12-28 LPA"]} />
-      </div>
-      <div className="marketPanel">
-        <strong>Source and compliance model</strong>
-        <p>
-          Production integrations should combine official career APIs, approved job portal APIs, and respectful crawlers with caching, deduplication, daily refreshes, attribution, and opt-out handling.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-function Insight({ title, icon, items }: { title: string; icon: React.ReactNode; items: string[] }) {
-  return (
-    <article className="insight">
-      <div className="sectionTitle">{icon}{title}</div>
-      <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>
-    </article>
-  );
-}
-
-function ResumeBuilder() {
-  const [data, setData] = useState({ name: "", role: "", skills: "", exp: "" });
-  
-  return (
-    <section className="resume">
-      <div className="resumeForm">
-        <div className="sectionTitle"><GraduationCap size={18} /> Resume builder</div>
-        <label className="field"><span>Name</span><input value={data.name} onChange={e => setData({...data, name: e.target.value})} placeholder="Aarav Sharma" /></label>
-        <label className="field"><span>Target role</span><input value={data.role} onChange={e => setData({...data, role: e.target.value})} placeholder="Software Engineer" /></label>
-        <label className="field"><span>Skills</span><input value={data.skills} onChange={e => setData({...data, skills: e.target.value})} placeholder="Java, React, SQL, Azure" /></label>
-        <label className="field"><span>Experience summary</span><textarea value={data.exp} onChange={e => setData({...data, exp: e.target.value})} placeholder="2 years building full-stack applications..." /></label>
-        <button className="primaryButton" onClick={() => alert("Resume Generated! You can now copy the preview.")}><Copy size={16} /> Generate template</button>
-      </div>
-      <div className="resumePreview">
-        <div className="previewPaper">
-          <h2 style={{ textAlign: "center", marginBottom: "4px" }}>{data.name || "YOUR NAME"}</h2>
-          <p style={{ textAlign: "center", fontSize: "14px", color: "#666", marginBottom: "20px" }}>{data.role || "Target Role"}</p>
-          
-          <div style={{ marginBottom: "15px" }}>
-            <strong style={{ borderBottom: "1px solid #ccc", display: "block", marginBottom: "5px" }}>PROFESSIONAL SUMMARY</strong>
-            <p style={{ fontSize: "13px" }}>{data.exp || "Your experience summary will appear here..."}</p>
-          </div>
-          
-          <div style={{ marginBottom: "15px" }}>
-            <strong style={{ borderBottom: "1px solid #ccc", display: "block", marginBottom: "5px" }}>SKILLS</strong>
-            <p style={{ fontSize: "13px" }}>{data.skills || "List your skills here..."}</p>
-          </div>
-          
-          <div>
-            <strong style={{ borderBottom: "1px solid #ccc", display: "block", marginBottom: "5px" }}>EXPERIENCE</strong>
-            <p style={{ fontSize: "12px", color: "#666" }}>Add your work history in the form to see it here.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function InterviewPrep() {
-  const [activeCategory, setActiveCategory] = useState<Category>("Engineer");
-  
-  const questions: Record<Category, {q: string, a: string}[]> = {
-    Engineer: [
-      { q: "What is the difference between SQL and NoSQL?", a: "SQL is relational, structured, and uses predefined schema. NoSQL is non-relational, distributed, and flexible." },
-      { q: "Explain the SDLC process.", a: "Planning, Analysis, Design, Implementation, Testing, and Maintenance." }
-    ],
-    Teacher: [
-      { q: "How do you handle a disruptive student?", a: "Stay calm, use positive reinforcement, and address the behavior privately." },
-      { q: "What is your teaching philosophy?", a: "Student-centered learning with focus on conceptual understanding." }
-    ],
-    Cashier: [
-      { q: "How would you handle a short drawer?", a: "Immediately inform the manager and review the day's transactions for errors." },
-      { q: "What is good customer service to you?", a: "Fast, accurate, and polite checkout experience." }
-    ],
-    IT: [
-      { q: "What is a VPN?", a: "A Virtual Private Network that creates a secure connection over the internet." },
-      { q: "How do you troubleshoot a slow PC?", a: "Check task manager, startup items, disk space, and run malware scans." }
-    ],
-    HR: [
-      { q: "How do you handle conflict between employees?", a: "Listen to both sides, remain neutral, and find a compromise based on company policy." },
-      { q: "What makes a good candidate?", a: "A mix of technical skills, cultural fit, and willingness to learn." }
-    ],
-    Sales: [
-      { q: "How do you handle rejection?", a: "View it as a learning opportunity and move quickly to the next lead." },
-      { q: "What is the key to closing a deal?", a: "Understanding the customer's pain point and showing how your product solves it." }
-    ],
-    Marketing: [
-      { q: "What are the 4 Ps of marketing?", a: "Product, Price, Place, and Promotion." },
-      { q: "How do you measure campaign success?", a: "ROI, CTR, conversion rate, and brand awareness metrics." }
-    ],
-    Government: [
-      { q: "Why do you want a government job?", a: "Job security, serving the nation, and structured career growth." },
-      { q: "How do you handle bureaucracy?", a: "By following protocols strictly while finding the most efficient way to process tasks." }
-    ]
-  };
-
-  return (
-    <section className="prep">
-      <div className="sectionTitle"><Sparkles size={18} /> Interview preparation</div>
-      <div className="prepTabs">
-        {categories.map(cat => (
-          <button key={cat} className={activeCategory === cat ? "prepTab active" : "prepTab"} onClick={() => setActiveCategory(cat)}>
-            {cat}
-          </button>
-        ))}
-      </div>
-      <div className="prepGrid">
-        {questions[activeCategory].map((item, idx) => (
-          <article key={idx} className="prepCard">
-            <strong>Q: {item.q}</strong>
-            <p>A: {item.a}</p>
-          </article>
-        ))}
-      </div>
-      <div className="blogBand">
-        <strong>Daily Prep Tips</strong>
-        <span>Practice mock interviews · Revise core subjects · Check current affairs for Govt jobs · Stay updated on Tech trends</span>
-      </div>
-    </section>
   );
 }
 

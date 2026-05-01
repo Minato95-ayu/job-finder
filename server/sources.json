@@ -32,28 +32,33 @@
   ],
   "publicWebQueries": [
     {
-      "name": "Daily Career News",
-      "query": "site:indiatimes.com \"hiring\" OR \"recruitment\" OR \"jobs\" software engineering",
+      "name": "LinkedIn Public India",
+      "query": "site:linkedin.com/jobs \"Software Engineer\" India",
       "enabled": true
     },
     {
-      "name": "Startup Hiring News India",
-      "query": "site:yourstory.com \"hiring\" OR \"raises series\" software engineer",
+      "name": "Naukri Public Search",
+      "query": "site:naukri.com \"Software Engineer\" jobs in Bangalore",
       "enabled": true
     },
     {
-      "name": "Hackathons Datathons Public Web",
-      "query": "India hackathon datathon internship hiring students college",
+      "name": "Indeed India Public",
+      "query": "site:indeed.com \"Hiring\" India jobs",
       "enabled": true
     },
     {
-      "name": "Placement Questions Public Web",
-      "query": "campus placement questions interview experience India engineering college",
+      "name": "AngelList India",
+      "query": "site:wellfound.com \"Software Engineer\" India startup",
       "enabled": true
     },
     {
-      "name": "Public LinkedIn Pages Search",
-      "query": "site:linkedin.com/jobs India hiring fresher software engineer",
+      "name": "Glassdoor India Jobs",
+      "query": "site:glassdoor.co.in \"Software Engineer\" India",
+      "enabled": true
+    },
+    {
+      "name": "GitHub Jobs India",
+      "query": "site:github.com \"hiring\" India remote",
       "enabled": true
     }
   ],
