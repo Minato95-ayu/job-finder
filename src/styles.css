@@ -668,36 +668,70 @@ h1 {
 .resumeForm,
 .resumePreview {
   padding: 18px;
+  background: var(--bg-card);
 }
 
-.resumePreview {
-  min-height: 420px;
+.previewPaper {
+  background: #fff;
+  padding: 40px;
+  min-height: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  color: #1a1a1a;
+  border-radius: 4px;
 }
 
-.resumeLine,
-.resumeBlock {
-  height: 18px;
-  margin-top: 18px;
-  border-radius: 6px;
-  background: #e2e8f0;
+.prepTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
-.resumeLine.wide {
-  width: 82%;
+.prepTab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: 700;
 }
 
-.resumeLine {
-  width: 66%;
+.prepTab.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
 }
 
-.resumeLine.short {
-  width: 44%;
+.prepCard {
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.resumeBlock {
-  width: 100%;
-  height: 190px;
+.prepCard strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--primary);
+  font-size: 1.1rem;
 }
+
+.prepCard p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.dark .previewPaper {
+  background: #fff;
+  color: #1a1a1a; /* Keep resume white even in dark mode for realism */
+}
+
+/* Rest of the styles... */
 
 .prepGrid {
   display: grid;
@@ -828,4 +862,72 @@ h1 {
   .alertToggle {
     width: 100%;
   }
+}
+.footer {
+  margin-top: 4rem;
+  padding: 4rem 2rem;
+  background: #fff;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  color: #64748b;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerContent h3 {
+  color: #172033;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.footerContent p {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  text-align: justify;
+}
+
+.footerBottom {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footerLinks a {
+  color: #0047ab;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.footerLinks a:hover {
+  text-decoration: underline;
+}
+
+.dark .footer {
+  background: #0f172a;
+  border-top-color: rgba(148, 163, 184, 0.1);
+}
+
+.dark .footerContent h3 {
+  color: #fff;
+}
+
+.dark .footerContent p {
+  color: #b8c4d8;
+}
+
+.dark .footerBottom {
+  border-top-color: rgba(148, 163, 184, 0.1);
 }
