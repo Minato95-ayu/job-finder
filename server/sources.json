@@ -28,6 +28,16 @@
       "name": "Prasar Bharati Jobs",
       "url": "https://prasarbharati.gov.in/category/vacancies/feed/",
       "enabled": true
+    },
+    {
+      "name": "Sarkari Result Notifications",
+      "url": "https://www.sarkariresult.com/rss/latestjobs.xml",
+      "enabled": true
+    },
+    {
+      "name": "FreeJobAlert India",
+      "url": "https://www.freejobalert.com/feed/",
+      "enabled": true
     }
   ],
   "publicWebQueries": [
@@ -171,6 +181,30 @@
         "title": "h2 a",
         "company": "span.company",
         "location": "span.location",
+        "link": "h2 a"
+      },
+      "enabled": true
+    },
+    {
+      "name": "Quikr Jobs India",
+      "url": "https://www.quikr.com/jobs/{query}+in+{location}",
+      "container": "div.job-card",
+      "selectors": {
+        "title": "a.job-title",
+        "company": "div.company-name",
+        "location": "div.location",
+        "link": "a.job-title"
+      },
+      "enabled": true
+    },
+    {
+      "name": "Click.in Jobs India",
+      "url": "https://www.click.in/search.php?q={query}&l={location}",
+      "container": "div.job-listing",
+      "selectors": {
+        "title": "h2 a",
+        "company": "div.company",
+        "location": "div.city",
         "link": "h2 a"
       },
       "enabled": true
