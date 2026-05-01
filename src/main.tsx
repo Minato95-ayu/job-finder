@@ -434,7 +434,7 @@ function JobCard({ job, selected, saved, applied, onSelect, onSave, onApply }: {
         <span><WalletCards size={14} /> {formatSalary(job.salaryMin, job.salaryMax)}</span>
         <span><Clock3 size={14} /> {job.postedDays === 0 ? "Today" : `${job.postedDays} days ago`}</span>
       </div>
-      <p>{job.description.slice(0, 150)}...</p>
+      <p>{(job.description ?? "").slice(0, 150)}...</p>
       <div className="tagRow">
         <span className={`sourceBadge ${sourceColors[job.sourceKind]}`}>{job.source}</span>
         <span>{job.category}</span>
@@ -473,16 +473,16 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
       </div>
       <div className="detailStats">
         <span><IndianRupee size={16} /> {formatSalary(job.salaryMin, job.salaryMax)}</span>
-        <span><Users size={16} /> {job.appliedCount.toLocaleString()} applied</span>
-        <span><Star size={16} /> {job.rating} rating</span>
+        <span><Users size={16} /> {(job.appliedCount ?? 0).toLocaleString()} applied</span>
+        <span><Star size={16} /> {(job.rating ?? 0).toFixed(1)} rating</span>
       </div>
       <p className="description">{job.description}</p>
-      <DetailList title="Key responsibilities" items={job.responsibilities} />
-      <DetailList title="Requirements & qualifications" items={job.requirements} />
-      <DetailList title="Skills in demand" items={job.skills} compact />
+      {(job.responsibilities ?? []).length > 0 && <DetailList title="Key responsibilities" items={job.responsibilities} />}
+      {(job.requirements ?? []).length > 0 && <DetailList title="Requirements & qualifications" items={job.requirements} />}
+      <DetailList title="Skills in demand" items={job.skills ?? []} compact />
       <div className="companyInfo">
         <strong>Company info</strong>
-        <p>{job.companyInfo}</p>
+        <p>{job.companyInfo ?? `${job.company} listing from ${job.source}. Verify details on source.`}</p>
       </div>
       <div className="applyPanel">
         <a className="primaryButton" href={job.applyUrl} target="_blank" rel="noreferrer" onClick={() => onApply(job.id)}>
