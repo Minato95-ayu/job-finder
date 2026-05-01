@@ -36,7 +36,7 @@ db.exec(`
 `);
 const xmlParser = new XMLParser({ ignoreAttributes: false });
 
-app.use(cors({ origin: ["http://127.0.0.1:5173", "http://localhost:5173"] }));
+app.use(cors()); // Enable all CORS for local development
 
 const indianCities = [
   "india",
@@ -739,6 +739,6 @@ app.get("/api/health", (_request, response) => {
   response.json({ ok: true, service: "India Job Finder API" });
 });
 
-app.listen(port, () => {
-  console.log(`India Job Finder API running at http://127.0.0.1:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`India Job Finder API running at http://0.0.0.0:${port}`);
 });

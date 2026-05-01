@@ -169,11 +169,12 @@ function App() {
         );
       } catch (error) {
         if (controller.signal.aborted) return;
+        console.error("Frontend Fetch Error:", error);
         setLiveJobs([]);
         setSourceStatuses([]);
         setDisabledSources([]);
         setJobApiStatus("empty");
-        setJobApiMessage("Connect to server to fetch live jobs.");
+        setJobApiMessage(`Backend Connection Failed: ${error instanceof Error ? error.message : "Not reachable"}. Check if 'node server/index.js' is running.`);
       } finally {
         if (!controller.signal.aborted) setLoadingJobs(false);
       }
