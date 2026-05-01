@@ -15,16 +15,6 @@
   ],
   "rss": [
     {
-      "name": "NCS India Government",
-      "url": "https://www.ncs.gov.in/_layouts/15/ncsp/RssFeed.aspx?Source=Jobs",
-      "enabled": true
-    },
-    {
-      "name": "Employment News India",
-      "url": "https://www.employmentnews.gov.in/NewEmp/Home.aspx",
-      "enabled": true
-    },
-    {
       "name": "Prasar Bharati Jobs",
       "url": "https://prasarbharati.gov.in/category/vacancies/feed/",
       "enabled": true
@@ -37,6 +27,36 @@
     {
       "name": "FreeJobAlert India",
       "url": "https://www.freejobalert.com/feed/",
+      "enabled": true
+    },
+    {
+      "name": "TeacherOn RSS",
+      "url": "https://www.teacheron.com/rss/teacher-jobs-in-india",
+      "enabled": true
+    },
+    {
+      "name": "Indeed India RSS Fallback",
+      "url": "https://in.indeed.com/rss?q={query}&l={location}",
+      "enabled": true
+    },
+    {
+      "name": "Careerjet India RSS",
+      "url": "https://www.careerjet.co.in/search/rss?s={query}&l={location}",
+      "enabled": true
+    },
+    {
+      "name": "FreshersHome RSS",
+      "url": "https://www.freshershome.com/jobs/feed/",
+      "enabled": true
+    },
+    {
+      "name": "IndGovtJobs RSS",
+      "url": "https://www.indgovtjobs.in/feeds/posts/default",
+      "enabled": true
+    },
+    {
+      "name": "GovtJobGuru RSS",
+      "url": "https://www.govtjobguru.in/feed/",
       "enabled": true
     }
   ],
