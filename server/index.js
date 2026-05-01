@@ -154,6 +154,34 @@ function hasIndiaSignal(job) {
   return indianCities.some((city) => new RegExp(`(^|[^a-z])${city}([^a-z]|$)`, "i").test(value));
 }
 
+function isSuspicious(job) {
+  const text = `${job.title} ${job.company} ${job.description}`.toLowerCase();
+  
+  // High-risk keywords for Indian job scams
+  const scamKeywords = [
+    "pay for job", "registration fee", "processing fee", "direct selection",
+    "no interview", "whatsapp on", "contact on +91", "urgent hiring for girls",
+    "call me at", "earn money from home", "data entry without investment",
+    "security deposit", "laptop fee", "training fee"
+  ];
+
+  if (scamKeywords.some(keyword => text.includes(keyword))) return true;
+
+  // Suspicious company names
+  const suspiciousCompanies = ["Consultancy", "Hiring Solutions", "HR Services"];
+  if (suspiciousCompanies.some(comp => job.company.toLowerCase().includes(comp.toLowerCase()) && job.sourceKind === "Web Scraper")) {
+    // Portals often have generic consultancies that are sometimes spammy
+    // We don't block them entirely but we could flag them. 
+    // For now, let's just block very obvious ones.
+    if (text.includes("urgent") && text.includes("hiring")) return true;
+  }
+
+  // Unreal salaries (e.g., > 10LPA for fresher roles on non-official sites)
+  if (job.experience === "Fresher" && job.salaryMax > 20 && job.sourceKind !== "Direct Company") return true;
+
+  return false;
+}
+
 function uniqueJobs(jobs) {
   const seen = new Set();
   return jobs.filter((job) => {
@@ -178,6 +206,8 @@ function saveJobsToDb(jobs) {
 
   const transaction = db.transaction((jobList) => {
     for (const job of jobList) {
+      if (isSuspicious(job)) continue; // Skip suspicious jobs
+      
       insert.run(
         job.id, job.title, job.company, job.category, job.location, job.state,
         job.type, job.experience, job.postedDays, job.source, job.sourceKind,
@@ -610,6 +640,8 @@ function applyFilters(jobs, query, category, experience, type, location, posted)
   const maxPosted = Number(posted || 30);
 
   return jobs.filter((job) => {
+    if (isSuspicious(job)) return false;
+
     const text = `${job.title} ${job.company} ${job.location} ${job.state} ${job.category} ${job.source} ${job.description} ${job.skills.join(" ")}`.toLowerCase();
     
     // Fuzzy word matching for query
