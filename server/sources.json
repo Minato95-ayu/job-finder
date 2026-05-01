@@ -68,8 +68,46 @@
         "link": "a",
         "description": ".job-description"
       },
-      "enabled": false
+      "enabled": true
+    },
+    {
+      "name": "Internshala",
+      "url": "https://internshala.com/jobs/keywords-{query}",
+      "container": ".container-fluid.individual_internship",
+      "selectors": {
+        "title": ".job-internship-name",
+        "company": ".company-name",
+        "location": ".location_link",
+        "link": "a",
+        "description": ".job-description-details"
+      },
+      "enabled": true
+    },
+    {
+      "name": "Shine India",
+      "url": "https://www.shine.com/job-search/{query}-jobs-in-{location}",
+      "container": "div[itemprop='itemListElement']",
+      "selectors": {
+        "title": "a[itemprop='name']",
+        "company": ".jobCard_jobCard_cName__m_HUE",
+        "location": ".jobCard_jobCard_lists__fdnsc",
+        "link": "a[itemprop='name']"
+      },
+      "enabled": true
+    },
+    {
+      "name": "Freshersworld",
+      "url": "https://www.freshersworld.com/jobs/jobsearch/{query}-jobs-in-{location}",
+      "container": ".job-container",
+      "selectors": {
+        "title": ".job-title",
+        "company": ".company-name",
+        "location": ".job-location",
+        "link": "a"
+      },
+      "enabled": true
     }
   ]
 }
+
 

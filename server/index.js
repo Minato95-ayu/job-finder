@@ -33,6 +33,16 @@ const indianCities = [
   "kochi",
   "indore",
   "remote",
+  "chandigarh",
+  "bhubaneswar",
+  "coimbatore",
+  "nagpur",
+  "surat",
+  "thiruvananthapuram",
+  "visakhapatnam",
+  "varanasi",
+  "patna",
+  "guwahati",
 ];
 
 async function loadSourceConfig() {
@@ -102,7 +112,11 @@ function cityStateFromLocation(value = "") {
 
 function hasIndiaSignal(job) {
   const value = `${job.location || ""} ${job.candidate_required_location || ""} ${job.job_country || ""} ${job.job_city || ""}`.toLowerCase();
-  if (/(worldwide|anywhere|global|remote)/i.test(value) && !/(europe|americas|us only|usa only|canada|uk only)/i.test(value)) {
+  // More lenient remote detection: any remote job that doesn't explicitly exclude India/Worldwide
+  if (/(worldwide|anywhere|global|remote|work from home)/i.test(value)) {
+    if (/(europe|americas|us only|usa only|canada|uk only|germany only|brazil only)/i.test(value)) {
+      return false;
+    }
     return true;
   }
   return indianCities.some((city) => new RegExp(`(^|[^a-z])${city}([^a-z]|$)`, "i").test(value));
@@ -220,29 +234,43 @@ function toPublicWebResult(item, source, query) {
 }
 
 async function fetchJson(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "User-Agent": "IndiaJobFinder/1.0",
-      Accept: "application/json",
-      ...(options.headers || {}),
-    },
-  });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-  return response.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json",
+        ...(options.headers || {}),
+      },
+    });
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function fetchText(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-      ...(options.headers || {}),
-    },
-  });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-  return response.text();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        ...(options.headers || {}),
+      },
+    });
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    return await response.text();
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function fetchScraped(source, query, location) {
@@ -287,10 +315,11 @@ async function fetchScraped(source, query, location) {
       }
     });
 
+    console.log(`[Scraper] ${source.name} found ${jobs.length} jobs`);
     return jobs;
   } catch (error) {
-    console.error(`Scraper error for ${source.name}:`, error.message);
-    throw error;
+    console.warn(`[Scraper] ${source.name} failed: ${error.message}`);
+    return [];
   }
 }
 
@@ -515,6 +544,7 @@ app.get("/api/jobs", async (request, response) => {
   const search = queryText || (categoryText && categoryText !== "All" ? categoryText : "");
   const runners = await buildSourceRunners(search, String(location));
   const enabledRunners = runners.filter((runner) => runner.enabled);
+  console.log(`[API] Searching ${enabledRunners.length} enabled sources for: "${search}"`);
   const results = await Promise.allSettled(enabledRunners.map((runner) => runner.run()));
 
   const jobs = uniqueJobs(results.flatMap((result) => (result.status === "fulfilled" ? result.value : [])));
