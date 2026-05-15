@@ -8,10 +8,15 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
 import cron from "node-cron";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Initialize Database
 const db = new Database(join(__dirname, "jobs.db"));
@@ -747,6 +752,39 @@ app.get("/api/sources", async (_request, response) => {
 
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true, service: "India Job Finder API" });
+});
+
+app.post("/api/analyze-job", express.json(), async (req, res) => {
+  try {
+    const { title, company, description } = req.body;
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ error: "Gemini API key is not configured on server." });
+    }
+
+    const prompt = `
+      You are an expert HR Analyst for Indian Job Market. Analyze this job:
+      Title: ${title}
+      Company: ${company}
+      Description: ${description}
+
+      Provide a JSON response with:
+      1. "summary": A 2-sentence summary of the role.
+      2. "skills": Top 5 skills required.
+      3. "scam_check": A score from 0-10 (0 safe, 10 obvious scam) and a brief reason.
+      4. "advice": One tip for the applicant.
+      5. "questions": 3 interview questions to prepare.
+
+      Respond ONLY with valid JSON.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    const jsonStr = text.replace(/```json|```/g, "").trim();
+    res.json(JSON.parse(jsonStr));
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    res.status(500).json({ error: "Failed to analyze job with AI." });
+  }
 });
 
 app.listen(port, "0.0.0.0", () => {

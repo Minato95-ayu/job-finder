@@ -22,6 +22,7 @@ import {
   Search,
   Send,
   Share2,
+  ShieldAlert,
   Sparkles,
   Star,
   Sun,
@@ -453,6 +454,31 @@ function JobCard({ job, selected, saved, applied, onSelect, onSave, onApply }: {
 }
 
 function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job | null; saved: string[]; applied: string[]; onBack: () => void; onSave: (id: string) => void; onApply: (id: string) => void }) {
+  const [analysis, setAnalysis] = useState<{ summary: string; skills: string[]; scam_check: { score: number; reason: string }; advice: string; questions: string[] } | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  useEffect(() => {
+    setAnalysis(null);
+  }, [job?.id]);
+
+  async function analyzeJob() {
+    if (!job) return;
+    setAnalyzing(true);
+    try {
+      const res = await fetch("http://127.0.0.1:4000/api/analyze-job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: job.title, company: job.company, description: job.description }),
+      });
+      const data = await res.json();
+      setAnalysis(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
   if (!job) {
     return (
       <aside className="detail emptyDetail">
@@ -471,6 +497,34 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
         <h2>{job.title}</h2>
         <p>{job.company} · {job.location}, {job.state}</p>
       </div>
+
+      {/* Gemini AI Card */}
+      <div className="geminiCard">
+        <div className="geminiHeader">
+          <Sparkles size={18} color="#00f0ff" />
+          <strong>Gemini AI Insights</strong>
+          {analyzing ? <span className="pulsing">Analyzing...</span> : !analysis && <button className="geminiButton" onClick={analyzeJob}>Analyze Job</button>}
+        </div>
+        {analysis && (
+          <div className="geminiContent">
+            <p className="aiSummary">"{analysis.summary}"</p>
+            <div className="aiGrid">
+              <div className="aiStat">
+                <ShieldAlert size={14} color={analysis.scam_check.score > 4 ? "#ff4d4d" : "#00ff00"} />
+                <span>Scam Score: {analysis.scam_check.score}/10</span>
+              </div>
+              <div className="aiStat">
+                <GraduationCap size={14} />
+                <span>Interview Ready</span>
+              </div>
+            </div>
+            <div className="aiAdvice">
+              <strong>💡 Pro Tip:</strong> {analysis.advice}
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="detailStats">
         <span><IndianRupee size={16} /> {formatSalary(job.salaryMin, job.salaryMax)}</span>
         <span><Users size={16} /> {(job.appliedCount ?? 0).toLocaleString()} applied</span>

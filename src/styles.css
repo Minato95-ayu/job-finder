@@ -946,3 +946,85 @@ h1 {
 .dark .footerBottom {
   border-top-color: rgba(148, 163, 184, 0.1);
 }
+
+/* Gemini AI Insights Styles */
+.geminiCard {
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(255, 0, 255, 0.05));
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 240, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.geminiHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.geminiButton {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #0047ab;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.aiSummary {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.dark .aiSummary {
+  color: #eef4ff;
+}
+
+.aiGrid {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.aiStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.aiAdvice {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dark .aiAdvice {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.pulsing {
+  animation: pulse 1.5s infinite;
+  font-size: 12px;
+  color: #0047ab;
+  font-weight: 800;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
