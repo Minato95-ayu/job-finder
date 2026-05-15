@@ -155,7 +155,7 @@ function App() {
       });
 
       try {
-        const response = await fetch(`http://127.0.0.1:4000/api/jobs?${params.toString()}`, { signal: controller.signal });
+        const response = await fetch(`/api/jobs?${params.toString()}`, { signal: controller.signal });
         if (!response.ok) throw new Error(`API returned ${response.status}`);
         const data = (await response.json()) as JobApiResponse;
         setLiveJobs(data.jobs);
@@ -465,7 +465,7 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
     if (!job) return;
     setAnalyzing(true);
     try {
-      const res = await fetch("http://127.0.0.1:4000/api/analyze-job", {
+      const res = await fetch("/api/analyze-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: job.title, company: job.company, description: job.description }),
