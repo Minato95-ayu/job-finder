@@ -43,6 +43,10 @@ const xmlParser = new XMLParser({ ignoreAttributes: false });
 
 app.use(cors()); // Enable all CORS for local development
 
+// Serve static files from the frontend build
+const distPath = join(__dirname, "../dist");
+app.use(express.static(distPath));
+
 const indianCities = [
   "india",
   "bengaluru",
@@ -785,6 +789,11 @@ app.post("/api/analyze-job", express.json(), async (req, res) => {
     console.error("Gemini Error:", error);
     res.status(500).json({ error: "Failed to analyze job with AI." });
   }
+});
+
+// Catch-all route to serve the frontend for any non-API request
+app.get("*", (req, res) => {
+  res.sendFile(join(distPath, "index.html"));
 });
 
 app.listen(port, "0.0.0.0", () => {
