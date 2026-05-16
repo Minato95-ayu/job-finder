@@ -1,44 +1,52 @@
 import "dotenv/config";
-import cors from "cors";
 import express from "express";
+import cors from "cors";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import cron from "node-cron";
+
+// Enterprise Imports
+import logger from "./utils/logger.js";
+import { securityMiddleware, globalRateLimit, errorHandler } from "./middleware/security.js";
+import { addScrapeTask } from "./services/queue.service.js";
+import { startScraperWorker } from "./workers/scraper.worker.js";
 import jobRoutes from "./routes/jobRoutes.js";
-import { runScrapers } from "./services/scraperService.js";
 
 const app = express();
-const port = Number(process.env.PORT || 4000);
+const port = process.env.PORT || 4000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// 1. Hardened Security Layer
+app.use(securityMiddleware);
+app.use(globalRateLimit);
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// 2. Observability: Request Logging
+app.use((req, res, next) => {
+  logger.info({ method: req.method, url: req.url, ip: req.ip }, "Incoming Request");
+  next();
+});
+
+// 3. Robust Routes
 app.use("/api/jobs", jobRoutes);
 
-// Static files (frontend build)
+// 4. Production Asset Delivery
 const distPath = join(__dirname, "../../../dist");
 app.use(express.static(distPath));
+app.get("*", (req, res) => res.sendFile(join(distPath, "index.html")));
 
-app.get("*", (req, res) => {
-  res.sendFile(join(distPath, "index.html"));
-});
+// 5. Global Error Boundary
+app.use(errorHandler);
 
-// Stable Data Pipeline: Schedule scraping every hour
-cron.schedule("0 * * * *", () => {
-    console.log("[Cron] Triggering hourly data ingestion");
-    runScrapers("Software Engineer", "India");
-    runScrapers("Web Developer", "India");
-});
+// 6. Enterprise Scale: Start Distributed Workers
+if (process.env.NODE_ENV === "production" || process.env.START_WORKERS === "true") {
+  startScraperWorker();
+  logger.info("Distributed Scraper Workers started");
+}
 
-// Initial scrape on startup
-setTimeout(() => {
-    console.log("[Startup] Initializing data pipeline...");
-    runScrapers("jobs", "India");
-}, 5000);
-
-app.listen(port, "0.0.0.0", () => {
-  console.log(`[Server] Robust Backend Infra running at http://localhost:${port}`);
-  console.log(`[ML] Pipeline initialized with Gemini 1.5 Flash`);
+app.listen(port, () => {
+  logger.info({ port }, "FAANG-level Job Finder Infra Online");
+  
+  // Initial enterprise task
+  addScrapeTask("Software Engineer", "India");
 });

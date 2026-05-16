@@ -123,14 +123,80 @@ body {
   gap: 4px;
 }
 
-/* Animation */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.search-container {
+  display: flex;
+  align-items: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+  gap: 12px;
 }
 
-.pulsing {
-  animation: pulse 2s infinite;
+.search-container input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  padding: 12px 0;
+  font-size: 1rem;
 }
 
-/* ... more styles to be added ... */
+.search-container input:focus {
+  outline: none;
+}
+
+.semantic-toggle {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.semantic-toggle:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--primary);
+}
+
+.semantic-toggle.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.ai-insight-panel {
+  margin-top: 24px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ai-header h3 {
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.trust-score {
+  margin-left: auto;
+  font-size: 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+

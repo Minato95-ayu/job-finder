@@ -34,6 +34,7 @@ interface Job {
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [query, setQuery] = useState("");
+  const [semanticSearch, setSemanticSearch] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -100,10 +101,17 @@ function App() {
               <div className="search-container">
                 <Search className="search-icon" size={20} />
                 <input 
-                  placeholder="Search jobs, skills, or companies..." 
+                  placeholder={semanticSearch ? "Explain what you're looking for (e.g. 'I want a high-paying remote React role with stock options')" : "Search jobs, skills..."} 
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
+                <button 
+                  className={`semantic-toggle ${semanticSearch ? 'active' : ''}`}
+                  onClick={() => setSemanticSearch(!semanticSearch)}
+                  title="Toggle AI Semantic Search"
+                >
+                  <Sparkles size={16} />
+                </button>
               </div>
               
               <div className="filter-group">
