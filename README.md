@@ -5,14 +5,36 @@
 [![Orchestration: Kubernetes](https://img.shields.io/badge/Orchestration-Kubernetes-326CE5?logo=kubernetes)](./k8s)
 [![ML: Gemini 1.5 Pro](https://img.shields.io/badge/ML-Gemini--1.5--Pro-blue?logo=google-gemini)](https://ai.google.dev/)
 
-**Antigravity** is a FAANG-level job aggregation and intelligence engine designed for the modern Indian job market. It leverages distributed workers, vector search infra, and real-time AI analysis to provide a high-fidelity, scam-free job discovery experience.
+**Antigravity** is a FAANG-level career intelligence platform. It’s not just a job board; it's a distributed AI ecosystem that automates resume matching, detects fraudulent listings, and provides personalized career roadmaps using a Multi-Agent architecture.
 
 ---
 
 ## 🖼️ UI/UX Showcase
 
 ![Antigravity Dashboard](./public/mockup.png)
-*Premium Glassmorphism Interface with Real-time AI Job Insights*
+*Premium Glassmorphism Interface with Integrated Resume Intelligence*
+
+---
+
+## 🚀 Key "Intelligent" Features
+
+### 🔥 1. AI Resume Match Engine (ATS Analysis)
+Upload your resume in PDF format and get an instant **ATS Score**. Our Gemini-powered engine extracts your skills and compares them directly with job requirements to give you:
+- **Match %** and a detailed fit verdict.
+- **Skill Gap Analysis**: Exactly what you need to learn to land the role.
+- **Improvement Tips**: Actionable advice to optimize your application.
+
+### 🤖 2. Personalized AI Career Agent
+A dedicated hub for career growth. Ask the agent about:
+- **Salary Trends**: "What's the roadmap for a ₹20LPA remote React role?"
+- **Skill Roadmaps**: Step-by-step guides to bridge your current gap.
+- **City Insights**: Market demand heatmaps for tech hubs like Bangalore, Gurgaon, and Pune.
+
+### 🛡️ 3. AI Fraud Intelligence
+A robust scam-detection pipeline that analyzes:
+- **Recruiter Authenticity**: Detects suspicious domains and patterns.
+- **Salary Anomalies**: Flags too-good-to-be-true offers.
+- **Multi-Agent Risk Scoring**: Multiple AI agents cross-verify job legitimacy.
 
 ---
 
@@ -20,108 +42,55 @@
 
 ```mermaid
 graph TD
-    User((User)) -->|HTTPS| GCLB[Google Cloud Load Balancer]
-    GCLB -->|WAF/Armor| K8s[GKE Cluster / Cloud Run]
+    User((User)) -->|HTTPS| API[Job API Service]
+    API -->|Cache| Redis[(Redis Cluster)]
     
-    subgraph "Core API Layer"
-        K8s -->|Express.js| API[Job API Service]
-        API -->|Cache| Redis[(Redis Cluster)]
-        API -->|Auth| JWT[JWT/Auth Service]
+    subgraph "Intelligent Core"
+        API -->|Match| Resume[Resume Engine]
+        API -->|Chat| Agent[Career Agent Hub]
+        Resume -->|Prompt| Gemini[Gemini 1.5 Pro]
     end
 
     subgraph "Distributed Data Pipeline"
         API -->|Enqueue| Queue[BullMQ / Redis]
-        Queue -->|Fetch| Worker[Distributed Scraper Workers]
-        Worker -->|Anti-Bot| Proxy[Rotating Proxy Service]
-        Worker -->|Vectorize| Gemini[Gemini Embeddings]
+        Queue -->|Fetch| Worker[Scraper Workers]
+        Worker -->|Vectorize| Embed[Gemini Embeddings]
         Worker -->|Store| DB[(PostgreSQL / Vector DB)]
     end
-
-    subgraph "Observability"
-        API -.->|Traces| OTel[OpenTelemetry / Jaeger]
-        API -.->|Logs| Pino[Pino / Cloud Logging]
-    end
 ```
 
 ---
 
-## 🛠️ Enterprise Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 19, Vite, Lucide, Framer Motion |
-| **Backend** | Node.js, Express, BullMQ, Pino |
-| **Database** | PostgreSQL, Redis (HA), Vector Embeddings |
-| **AI/ML** | Gemini 1.5 Pro (Analysis), text-embedding-004 (Vector) |
-| **Infrastructure** | Terraform, Kubernetes, Docker, GitHub Actions |
-| **Security** | Helmet, Rate Limiting, JWT, WAF |
+- **Frontend**: React 19, Framer Motion, Lucide Icons.
+- **Backend**: Node.js, Express, BullMQ (Distributed Queues).
+- **AI/ML**: Google Gemini 1.5 Pro, text-embedding-004.
+- **Infra**: Docker, Kubernetes, Terraform, GitHub Actions.
+- **Observability**: OpenTelemetry, Pino Logging.
 
 ---
 
-## ⚡ Key Enterprise Features
-
-### 🔍 AI Semantic Search (Vector Infra)
-Unlike traditional keyword matching, Antigravity uses **Vector Embeddings**. We convert job descriptions into high-dimensional vectors, allowing users to find roles based on *meaning* and *intent*.
-
-### 🛡️ Distributed Worker System
-Our scraping engine is decoupled from the API.
-- **Queue**: BullMQ manages thousands of concurrent scraping tasks.
-- **Workers**: Horizontally scalable processes that ingest data from Greenhouse, Lever, and specialized portals.
-- **Anti-Bot**: Advanced header fingerprinting and proxy rotation to ensure 99.9% uptime for data ingestion.
-
-### 📈 Observability & Tracing
-Integrated **OpenTelemetry** for FAANG-level distributed tracing. Monitor request bottlenecks across microservices and DB queries in real-time.
-
----
-
-## 🚀 Deployment & Operations
-
-### Local Development
-```bash
-# Install dependencies
-npm install
-
-# Setup Redis & Environment
-cp .env.example .env
-
-# Run robust dev stack
-npm run dev
-```
-
-### Production Hardening
-- **CI/CD**: Automated via `.github/workflows/main.yml`.
-- **Infrastructure**: Managed via Terraform in `/terraform`.
-- **Orchestration**: Kubernetes manifests in `/k8s`.
-
----
-
-## 📡 API Flow (Sequence)
+## 📡 API Flow: Resume Match Engine
 
 ```mermaid
 sequenceDiagram
-    participant U as User
+    participant U as User (PDF)
     participant A as API Server
-    participant R as Redis Cache
-    participant V as Vector DB
+    participant P as PDF Parser
+    participant G as Gemini AI
     
-    U->>A: GET /api/jobs?query="semantic query"
-    A->>R: Check Cache
-    alt Cache Hit
-        R-->>A: Return JSON
-    else Cache Miss
-        A->>V: Execute Vector Search
-        V-->>A: Top K Similar Jobs
-        A->>R: Store in Cache
-    end
-    A-->>U: Return Results
+    U->>A: POST /api/resume/match/:jobId
+    A->>P: Extract Text from Buffer
+    P-->>A: Raw Text
+    A->>G: Analyze Resume vs Job Data
+    G-->>A: JSON (Match%, Score, Tips)
+    A-->>U: Premium Result UI
 ```
-
----
-
-## 🤝 Contributing
-Antigravity is built for scale. Please review our [Enterprise Coding Standards](./CONTRIBUTING.md) before submitting PRs.
 
 ---
 
 ## 📄 License
-Enterprise Core License © 2026 Antigravity Systems.
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+*Built with ❤️ by Antigravity Systems (A portfolio-ready enterprise project).*
