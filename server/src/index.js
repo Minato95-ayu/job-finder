@@ -10,6 +10,7 @@ import { securityMiddleware, globalRateLimit, errorHandler } from "./middleware/
 import { addScrapeTask } from "./services/queue.service.js";
 import { startScraperWorker } from "./workers/scraper.worker.js";
 import jobRoutes from "./routes/jobRoutes.js";
+import resumeRoutes from "./routes/resumeRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 // 3. Robust Routes
 app.use("/api/jobs", jobRoutes);
+app.use("/api/resume", resumeRoutes);
 
 // 4. Production Asset Delivery
 const distPath = join(__dirname, "../../../dist");

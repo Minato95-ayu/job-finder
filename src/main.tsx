@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { 
   Search, Sun, Moon, Sparkles, Filter, 
-  LayoutDashboard, Briefcase, ShieldCheck, Zap 
+  LayoutDashboard, Briefcase, ShieldCheck, Zap,
+  UserCircle, MessageSquare
 } from "lucide-react";
 import "./styles.css";
 import { JobCard } from "./components/JobCard";
+import { ResumeMatcher } from "./components/ResumeMatcher";
+import { CareerAgent } from "./components/CareerAgent";
 
 interface Job {
   id: string;
@@ -64,8 +67,8 @@ function App() {
         <div className="brand">
           <Zap size={32} className="logo-icon" />
           <div>
-            <strong>Antigravity Jobs</strong>
-            <span className="pulsing">AI-Powered Ingestion Active</span>
+            <strong>Antigravity AI</strong>
+            <span className="pulsing">Career Intelligence Platform</span>
           </div>
         </div>
         
@@ -77,10 +80,16 @@ function App() {
             <Search size={18} /> Explore
           </button>
           <button 
-            className={activeTab === 'dashboard' ? 'active' : ''} 
-            onClick={() => setActiveTab('dashboard')}
+            className={activeTab === 'agent' ? 'active' : ''} 
+            onClick={() => setActiveTab('agent')}
           >
-            <LayoutDashboard size={18} /> Moat Insights
+            <MessageSquare size={18} /> Career Agent
+          </button>
+          <button 
+            className={activeTab === 'metrics' ? 'active' : ''} 
+            onClick={() => setActiveTab('metrics')}
+          >
+            <LayoutDashboard size={18} /> Analytics
           </button>
         </nav>
 
@@ -89,45 +98,34 @@ function App() {
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <div className="user-profile">
-            <div className="avatar">A</div>
+            <UserCircle size={24} />
           </div>
         </div>
       </header>
 
       <main className="content-layout">
-        {activeTab === 'explore' ? (
+        {activeTab === 'explore' && (
           <>
             <section className="search-sidebar">
               <div className="search-container">
                 <Search className="search-icon" size={20} />
                 <input 
-                  placeholder={semanticSearch ? "Explain what you're looking for (e.g. 'I want a high-paying remote React role with stock options')" : "Search jobs, skills..."} 
+                  placeholder={semanticSearch ? "e.g. 'Remote React roles with ₹20LPA+ salary'" : "Search jobs..."} 
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
                 <button 
                   className={`semantic-toggle ${semanticSearch ? 'active' : ''}`}
                   onClick={() => setSemanticSearch(!semanticSearch)}
-                  title="Toggle AI Semantic Search"
                 >
                   <Sparkles size={16} />
                 </button>
               </div>
               
-              <div className="filter-group">
-                <h3><Filter size={16} /> Advanced Filters</h3>
-                <div className="chips">
-                  <span className="chip active">Remote</span>
-                  <span className="chip">Full-time</span>
-                  <span className="chip">Bangalore</span>
-                  <span className="chip">Fresher</span>
-                </div>
-              </div>
-
               <div className="job-feed">
                 {loading ? (
                   <div className="loading-state">
-                    {[1,2,3].map(i => <div key={i} className="skeleton-card" />)}
+                    {[1,2,3,4].map(i => <div key={i} className="skeleton-card" />)}
                   </div>
                 ) : (
                   jobs.map(job => (
@@ -150,7 +148,6 @@ function App() {
               {selectedJob ? (
                 <div className="viewer-content">
                   <div className="viewer-header">
-                    <span className="source-label">{selectedJob.sourceKind} via {selectedJob.source}</span>
                     <h1>{selectedJob.title}</h1>
                     <div className="viewer-meta">
                       <span>{selectedJob.company}</span>
@@ -159,73 +156,65 @@ function App() {
                     </div>
                   </div>
 
-                  <div className="ai-insight-panel">
-                    <div className="ai-header">
-                      <Sparkles size={20} />
-                      <h3>Gemini AI Analysis</h3>
-                      <span className="trust-score">98% Accuracy</span>
+                  <div className="intelligence-grid">
+                    <div className="ai-insight-panel">
+                       <div className="ai-header">
+                          <Sparkles size={18} />
+                          <h3>AI Analysis</h3>
+                       </div>
+                       {selectedJob.ai_analysis ? (
+                          <div className="ai-body">
+                             <p>{selectedJob.ai_analysis.summary}</p>
+                             <div className="scam-meter">
+                                <label>Scam Risk: {selectedJob.ai_analysis.scam_check.score}/10</label>
+                                <div className="meter-bg"><div className="meter-fill" style={{width: `${selectedJob.ai_analysis.scam_check.score * 10}%`, background: selectedJob.ai_analysis.scam_check.score > 5 ? '#ef4444' : '#22c55e'}}></div></div>
+                             </div>
+                          </div>
+                       ) : <p>Analyzing...</p>}
                     </div>
-                    {selectedJob.ai_analysis ? (
-                      <div className="ai-body">
-                        <p className="ai-summary">{selectedJob.ai_analysis.summary}</p>
-                        <div className="ai-stats-row">
-                          <div className="ai-stat">
-                            <label>Scam Risk</label>
-                            <span className={selectedJob.ai_analysis.scam_check.score > 3 ? 'high' : 'low'}>
-                              {selectedJob.ai_analysis.scam_check.score}/10
-                            </span>
-                          </div>
-                          <div className="ai-stat">
-                            <label>Market Demand</label>
-                            <span>High</span>
-                          </div>
-                        </div>
-                        <div className="ai-skills">
-                          {selectedJob.ai_analysis.skills.map((s: string) => <span key={s} className="ai-skill-tag">{s}</span>)}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="ai-placeholder">
-                        <p>Background analysis in progress...</p>
-                        <button className="manual-analyze">Analyze Now</button>
-                      </div>
-                    )}
+
+                    <ResumeMatcher jobId={selectedJob.id} jobTitle={selectedJob.title} />
                   </div>
 
                   <div className="description-section">
                     <h3>About the role</h3>
                     <p>{selectedJob.description}</p>
                   </div>
-
-                  <div className="viewer-footer">
-                    <button className="btn-apply-large" onClick={() => window.open(selectedJob.applyUrl, '_blank')}>Apply Direct on {selectedJob.source}</button>
-                    <button className="btn-save-large">Save for later</button>
-                  </div>
                 </div>
               ) : (
                 <div className="empty-viewer">
                   <Briefcase size={48} />
-                  <h2>Select a job to view details</h2>
+                  <h2>Select a job to unlock AI matching</h2>
                 </div>
               )}
             </section>
           </>
-        ) : (
-          <section className="moat-dashboard">
-             <div className="moat-header">
-                <h1>The Antigravity Moat</h1>
-                <p>Deep-layer intelligence for the Indian Job Market</p>
-             </div>
-             <div className="moat-grid">
-                <div className="moat-card">
-                   <ShieldCheck size={32} />
-                   <h3>Scam Radar v2.0</h3>
-                   <p>Our ML pipeline has flagged 124 suspicious listings this week across 15 job portals.</p>
+        )}
+
+        {activeTab === 'agent' && (
+          <section className="agent-hub">
+            <CareerAgent />
+          </section>
+        )}
+
+        {activeTab === 'metrics' && (
+          <section className="metrics-dashboard">
+             <h1>Platform Intelligence</h1>
+             <div className="metrics-grid">
+                <div className="metric-card">
+                   <h3>Jobs Ingested</h3>
+                   <div className="value">14,208</div>
+                   <div className="trend">+12% this week</div>
                 </div>
-                <div className="moat-card">
-                   <Zap size={32} />
-                   <h3>Skill Gap Engine</h3>
-                   <p>Based on 5000+ listings, top 3 skills in demand: React, Node.js, and GenAI prompt engineering.</p>
+                <div className="metric-card">
+                   <h3>AI Matches Completed</h3>
+                   <div className="value">856</div>
+                   <div className="trend">+45% this week</div>
+                </div>
+                <div className="metric-card">
+                   <h3>Scams Prevented</h3>
+                   <div className="value">192</div>
+                   <div className="trend">High protection</div>
                 </div>
              </div>
           </section>
