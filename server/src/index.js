@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === "production" || process.env.START_WORKERS === "true
 }
 
 app.listen(port, () => {
-  logger.info({ port }, "FAANG-level Job Finder Infra Online");
+  logger.info({ port }, "Ayush's Job Intelligence Engine Online");
   
   // Initial enterprise task
   addScrapeTask("Software Engineer", "India");

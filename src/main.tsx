@@ -67,8 +67,8 @@ function App() {
         <div className="brand">
           <Zap size={32} className="logo-icon" />
           <div>
-            <strong>Antigravity AI</strong>
-            <span className="pulsing">Career Intelligence Platform</span>
+            <strong>Ayush's Job Intelligence</strong>
+            <span className="pulsing">Enterprise Career Platform</span>
           </div>
         </div>
         
