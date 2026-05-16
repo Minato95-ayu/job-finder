@@ -42,8 +42,14 @@
     "vite": "^7.0.0"
   },
   "devDependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.76.0",
+    "@opentelemetry/sdk-node": "^0.218.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "jest": "^30.4.2",
+    "redis-mock": "^0.56.3",
+    "supertest": "^7.2.2"
   }
 }

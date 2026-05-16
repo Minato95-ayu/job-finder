@@ -1,0 +1,53 @@
+name: Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+
+  build:
+    name: Build & Push Container
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Google Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: Build and Push to AR
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/job-finder/api:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/job-finder/api:${{ github.sha }}
+
+  deploy:
+    name: Production Deployment
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy job-finder \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/job-finder/api:${{ github.sha }} \
+            --region us-central1-docker.pkg.dev \
+            --platform managed \
+            --set-env-vars="NODE_ENV=production,REDIS_URL=${{ secrets.REDIS_URL }}"
