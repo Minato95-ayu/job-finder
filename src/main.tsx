@@ -477,14 +477,15 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
       
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to analyze job");
+        setAnalysis({ error: errorData.error || "Failed to analyze job" });
+        return;
       }
 
       const data = await res.json();
       setAnalysis(data);
     } catch (err: any) {
       console.error(err);
-      alert("AI Analysis Error: " + err.message);
+      setAnalysis({ error: "Connection error: " + err.message });
     } finally {
       setAnalyzing(false);
     }
@@ -518,20 +519,47 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
         </div>
         {analysis && (
           <div className="geminiContent">
-            <p className="aiSummary">"{analysis.summary}"</p>
-            <div className="aiGrid">
-              <div className="aiStat">
-                <ShieldAlert size={14} color={analysis.scam_check.score > 4 ? "#ff4d4d" : "#00ff00"} />
-                <span>Scam Score: {analysis.scam_check.score}/10</span>
+            {analysis.error ? (
+              <div className="aiError" style={{ color: '#ff4444', padding: '10px', border: '1px solid #ff4444', borderRadius: '8px', background: 'rgba(255, 68, 68, 0.1)' }}>
+                <strong>AI Error:</strong> {analysis.error}
               </div>
-              <div className="aiStat">
-                <GraduationCap size={14} />
-                <span>Interview Ready</span>
-              </div>
-            </div>
-            <div className="aiAdvice">
-              <strong>💡 Pro Tip:</strong> {analysis.advice}
-            </div>
+            ) : (
+              <>
+                <p className="aiSummary">"{analysis.summary}"</p>
+                
+                <div className="aiGrid">
+                  <div className="aiStat">
+                    <span className="label">Scam Score</span>
+                    <span className={`value ${analysis.scam_check?.score > 5 ? 'scam-high' : 'scam-low'}`}>
+                      {analysis.scam_check?.score}/10
+                    </span>
+                  </div>
+                  <div className="aiStat">
+                    <span className="label">Safety</span>
+                    <span className="value">{analysis.scam_check?.reason}</span>
+                  </div>
+                </div>
+
+                <div className="aiTags">
+                  {analysis.skills?.map((s: string) => (
+                    <span key={s} className="aiTag">{s}</span>
+                  ))}
+                </div>
+
+                <div className="aiAdvice">
+                  <strong>💡 Pro-Tip:</strong> {analysis.advice}
+                </div>
+
+                <div className="aiQuestions">
+                  <strong>🎯 Prep Questions:</strong>
+                  <ul>
+                    {analysis.questions?.map((q: string) => (
+                      <li key={q}>{q}</li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
