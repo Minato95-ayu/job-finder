@@ -4,7 +4,7 @@ import cors from "cors";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Enterprise Imports
+// Enterprise Imports - Using BullMQ for distributed task handling
 import logger from "./utils/logger.js";
 import { securityMiddleware, globalRateLimit, errorHandler } from "./middleware/security.js";
 import { addScrapeTask } from "./services/queue.service.js";
@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 3. Robust Routes
+// 3. Main API Routes - Separated for scalability
 app.use("/api/jobs", jobRoutes);
 app.use("/api/resume", resumeRoutes);
 
@@ -49,6 +49,6 @@ if (process.env.NODE_ENV === "production" || process.env.START_WORKERS === "true
 app.listen(port, () => {
   logger.info({ port }, "Ayush's Job Intelligence Engine Online");
   
-  // Initial enterprise task
+  // Kickstart the ingestion process for the first set of jobs
   addScrapeTask("Software Engineer", "India");
 });

@@ -35,14 +35,18 @@ interface Job {
 }
 
 function App() {
+  // Theme and Tab Management - Handled locally for performance
   const [darkMode, setDarkMode] = useState(true);
+  const [activeTab, setActiveTab] = useState("explore");
+  
+  // Job Data and Search State
   const [query, setQuery] = useState("");
   const [semanticSearch, setSemanticSearch] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [activeTab, setActiveTab] = useState("explore");
 
+  // Initial Data Fetch
   useEffect(() => {
     fetchJobs();
   }, [query]);

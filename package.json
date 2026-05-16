@@ -1,7 +1,9 @@
 {
-  "name": "indian-job-finder",
+  "name": "ayush-job-intelligence",
   "version": "1.0.0",
   "private": true,
+  "description": "Enterprise-grade career intelligence platform built for high-scale job discovery and AI-powered resume matching.",
+  "author": "Ayush",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run api\" \"vite --host 127.0.0.1\"",
