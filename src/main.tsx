@@ -468,12 +468,23 @@ function JobDetails({ job, saved, applied, onBack, onSave, onApply }: { job: Job
       const res = await fetch("/api/analyze-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: job.title, company: job.company, description: job.description }),
+        body: JSON.stringify({ 
+          title: job.title || "Unknown Title", 
+          company: job.company || "Unknown Company", 
+          description: job.description || "No description provided." 
+        }),
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to analyze job");
+      }
+
       const data = await res.json();
       setAnalysis(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert("AI Analysis Error: " + err.message);
     } finally {
       setAnalyzing(false);
     }

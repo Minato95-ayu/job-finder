@@ -761,33 +761,37 @@ app.get("/api/health", (_request, response) => {
 app.post("/api/analyze-job", express.json(), async (req, res) => {
   try {
     const { title, company, description } = req.body;
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: "Gemini API key is not configured on server." });
+    if (!title || (!company && !description)) {
+      return res.status(400).json({ error: "Insufficient job data for analysis." });
     }
 
-    const prompt = `
-      You are an expert HR Analyst for Indian Job Market. Analyze this job:
-      Title: ${title}
-      Company: ${company}
-      Description: ${description}
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "Gemini API Key is not configured on the server." });
+    }
 
-      Provide a JSON response with:
-      1. "summary": A 2-sentence summary of the role.
-      2. "skills": Top 5 skills required.
-      3. "scam_check": A score from 0-10 (0 safe, 10 obvious scam) and a brief reason.
-      4. "advice": One tip for the applicant.
-      5. "questions": 3 interview questions to prepare.
-
-      Respond ONLY with valid JSON.
-    `;
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = `Analyze this job posting:
+    Title: ${title}
+    Company: ${company || "Not specified"}
+    Description: ${description || "No description provided."}
+    
+    Provide a JSON response with:
+    {
+      "summary": "2-sentence role summary",
+      "skills": ["top 3 required skills"],
+      "scam_check": { "score": 0-10, "reason": "why this score?" },
+      "advice": "1 tip for applying",
+      "questions": ["2 interview questions"]
+    }`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
+    // Clean potential markdown from response
     const jsonStr = text.replace(/```json|```/g, "").trim();
     res.json(JSON.parse(jsonStr));
   } catch (error) {
     console.error("Gemini Error:", error);
-    res.status(500).json({ error: "Failed to analyze job with AI." });
+    res.status(500).json({ error: "AI Analysis failed: " + (error.message || "Internal Server Error") });
   }
 });
 
