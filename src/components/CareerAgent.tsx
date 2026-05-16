@@ -18,12 +18,12 @@ export function CareerAgent() {
     try {
       // In real implementation, this would call a /api/career/agent endpoint
       // For now, we simulate a very intelligent multi-agent response
-      const response = await fetch("/api/jobs/analyze-job", { // Using existing analyze endpoint for demo or create new one
+      const response = await fetch("/api/jobs/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title: "Career Guidance", company: "System", description: input })
       });
-      const data = await res.json();
+      const data = await response.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.advice || "Based on market trends, I recommend focusing on Next.js and GenAI prompt engineering to hit the ₹15LPA mark in remote roles." }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: "I'm analyzing market trends... (Network simulation active)" }]);

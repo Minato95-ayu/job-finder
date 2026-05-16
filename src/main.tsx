@@ -182,11 +182,29 @@ function App() {
                                 </div>
                              </div>
                           </div>
-                       ) : (
-                          <div className="loading-ai">
-                             <div className="pulsing">🤖 Intelligence engine analyzing job listing...</div>
-                          </div>
-                       )}
+                        ) : (
+                           <div className="loading-ai">
+                              <button 
+                                className="btn-analyze"
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/jobs/analyze", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify(selectedJob)
+                                    });
+                                    const data = await res.json();
+                                    setSelectedJob({ ...selectedJob, ai_analysis: data });
+                                  } catch (e) {
+                                    console.error("Analysis failed", e);
+                                  }
+                                }}
+                              >
+                                <Sparkles size={16} /> Analyze Job with Gemini
+                              </button>
+                              <div className="pulsing-hint">Click to unlock AI insights</div>
+                           </div>
+                        )}
                     </div>
 
                     <ResumeMatcher jobId={selectedJob.id} jobTitle={selectedJob.title} />

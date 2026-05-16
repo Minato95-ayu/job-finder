@@ -378,9 +378,30 @@ body {
   color: var(--primary);
 }
 
-.pulsing {
-  font-size: 0.75rem;
-  color: var(--secondary);
+.btn-analyze {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.btn-analyze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.pulsing-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 8px;
   animation: pulse 2s infinite;
 }
 
