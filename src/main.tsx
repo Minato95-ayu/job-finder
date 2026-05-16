@@ -166,15 +166,27 @@ function App() {
                           <Sparkles size={18} />
                           <h3>AI Analysis</h3>
                        </div>
-                       {selectedJob.ai_analysis ? (
+                       {selectedJob?.ai_analysis ? (
                           <div className="ai-body">
-                             <p>{selectedJob.ai_analysis.summary}</p>
+                             <p>{selectedJob.ai_analysis?.summary || "No summary available."}</p>
                              <div className="scam-meter">
-                                <label>Scam Risk: {selectedJob.ai_analysis.scam_check.score}/10</label>
-                                <div className="meter-bg"><div className="meter-fill" style={{width: `${selectedJob.ai_analysis.scam_check.score * 10}%`, background: selectedJob.ai_analysis.scam_check.score > 5 ? '#ef4444' : '#22c55e'}}></div></div>
+                                <label>Scam Risk: {selectedJob.ai_analysis?.scam_check?.score ?? "N/A"}/10</label>
+                                <div className="meter-bg">
+                                  <div 
+                                    className="meter-fill" 
+                                    style={{
+                                      width: `${(selectedJob.ai_analysis?.scam_check?.score || 0) * 10}%`, 
+                                      background: (selectedJob.ai_analysis?.scam_check?.score || 0) > 5 ? '#ef4444' : '#22c55e'
+                                    }}
+                                  ></div>
+                                </div>
                              </div>
                           </div>
-                       ) : <p>Analyzing...</p>}
+                       ) : (
+                          <div className="loading-ai">
+                             <div className="pulsing">🤖 Intelligence engine analyzing job listing...</div>
+                          </div>
+                       )}
                     </div>
 
                     <ResumeMatcher jobId={selectedJob.id} jobTitle={selectedJob.title} />

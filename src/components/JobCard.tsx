@@ -61,12 +61,12 @@ export function JobCard({ job, selected, saved, applied, onSelect, onSave, onApp
         <span className="meta-item"><Clock3 size={14} /> {job.postedDays === 0 ? "Today" : `${job.postedDays}d ago`}</span>
       </div>
 
-      <p className="job-snippet">{(job.description ?? "").slice(0, 120)}...</p>
+      <p className="job-snippet">{(job.description || "").slice(0, 120)}...</p>
 
       <div className="tag-cloud">
         <span className="source-tag">{job.source}</span>
         <span className="category-tag">{job.category}</span>
-        {job.skills.slice(0, 3).map(skill => (
+        {(job.skills || []).slice(0, 3).map(skill => (
           <span key={skill} className="skill-tag">{skill}</span>
         ))}
       </div>
