@@ -3,7 +3,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import logger from "../utils/logger.js";
 import db from "../config/db.js";
-import { generateEmbedding } from "./vector.service.js";
+import { generateEmbedding } from "../services/vector.service.js";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 
