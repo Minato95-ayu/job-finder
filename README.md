@@ -94,9 +94,12 @@ npm install
 ```
 
 ### 2. Configure Environment
-```bash
-cp .env.example .env
-# Add your GEMINI_API_KEY
+Create a `.env` file in the root:
+```env
+PORT=4000
+GEMINI_API_KEY=your_google_ai_key
+REDIS_URL=redis://127.0.0.1:6379
+NODE_ENV=development
 ```
 
 ### 3. Run Development Stack
@@ -104,6 +107,68 @@ cp .env.example .env
 npm run dev
 ```
 *Note: Automatically switches to **Ayush's Mode** if Redis is not detected locally.*
+
+---
+
+## 📡 API Documentation
+
+### `POST /api/resume/analyze`
+Analyzes a PDF resume against a specific job context.
+- **Body**: `multipart/form-data` (file: `resume`, fields: `jobId`, `jobTitle`)
+- **Response**: Match score, missing skills, and improvement tips.
+
+### `POST /api/agent/chat`
+Interactive multi-agent career guidance.
+- **Body**: `{ "message": "string" }`
+- **Response**: AI-driven roadmap or market analysis.
+
+### `GET /api/jobs`
+Fetches real-time job listings with AI fraud analysis.
+- **Query**: `query`, `location`
+- **Response**: Array of `Job` objects with `ai_analysis`.
+
+---
+
+## 💻 Usage Examples
+
+### Fetch Jobs with cURL
+```bash
+curl http://localhost:4000/api/jobs?query=React&location=India
+```
+
+### Analyze Resume via JS
+```javascript
+const formData = new FormData();
+formData.append('resume', pdfBlob);
+formData.append('jobId', '123');
+
+const res = await fetch('/api/resume/analyze', {
+  method: 'POST',
+  body: formData
+});
+```
+
+---
+
+## ❓ Troubleshooting & FAQ
+
+**Q: Why do I see "Redis not found" in logs?**
+A: This is normal in development. The system automatically switches to **Ayush's Mode** (In-memory) so you can keep working without installing Redis.
+
+**Q: Frontend is showing "Unexpected token <"?**
+A: Make sure the backend server (Port 4000) is running. This usually happens when the frontend can't find the API.
+
+**Q: Gemini API errors?**
+A: Ensure your `GEMINI_API_KEY` is valid and has not exceeded its free-tier quota.
+
+---
+
+## 🤝 Contributing
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 ---
 

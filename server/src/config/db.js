@@ -34,4 +34,18 @@ db.exec(`
   )
 `);
 
+// Migration: Ensure new columns exist in old databases
+const columns = db.prepare("PRAGMA table_info(jobs)").all();
+const columnNames = columns.map(c => c.name);
+
+if (!columnNames.includes("ai_score")) {
+  db.exec("ALTER TABLE jobs ADD COLUMN ai_score REAL DEFAULT 0");
+}
+if (!columnNames.includes("is_scam")) {
+  db.exec("ALTER TABLE jobs ADD COLUMN is_scam INTEGER DEFAULT 0");
+}
+if (!columnNames.includes("ai_analysis")) {
+  db.exec("ALTER TABLE jobs ADD COLUMN ai_analysis TEXT");
+}
+
 export default db;
