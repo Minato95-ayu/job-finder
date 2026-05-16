@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently \"npm run api\" \"vite --host 127.0.0.1\"",
     "client": "vite --host 127.0.0.1",
-    "api": "npx kill-port 4000 && node server/index.js",
+    "api": "npx kill-port 4000 && node server/src/index.js",
+    "start": "node server/src/index.js",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1"
   },

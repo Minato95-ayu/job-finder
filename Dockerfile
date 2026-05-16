@@ -17,4 +17,4 @@ RUN npm run build
 EXPOSE 4000
 
 # Start the server
-CMD ["node", "server/index.js"]
+CMD ["node", "server/src/index.js"]
