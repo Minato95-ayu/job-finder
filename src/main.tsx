@@ -116,7 +116,7 @@ function App() {
                 <input 
                   placeholder={semanticSearch ? "e.g. 'Remote React roles with ₹20LPA+ salary'" : "Search jobs..."} 
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
                 />
                 <button 
                   className={`semantic-toggle ${semanticSearch ? 'active' : ''}`}

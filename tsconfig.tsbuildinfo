@@ -1,1 +1,1 @@
-{"root":["./src/main.tsx","./src/components/jobcard.tsx"],"version":"5.9.3"}
+{"root":["./src/main.tsx","./src/components/careeragent.tsx","./src/components/jobcard.tsx","./src/components/resumematcher.tsx"],"version":"5.9.3"}

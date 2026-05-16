@@ -1,10 +1,23 @@
 import React, { useState } from "react";
 import { Upload, CheckCircle, AlertTriangle, FileText, Sparkles } from "lucide-react";
 
-export function ResumeMatcher({ jobId, jobTitle }) {
-  const [file, setFile] = useState(null);
+interface MatchResults {
+  match_percentage: number;
+  ats_score: number;
+  matched_skills: string[];
+  missing_skills: string[];
+  verdict: string;
+}
+
+interface ResumeMatcherProps {
+  jobId: string;
+  jobTitle: string;
+}
+
+export function ResumeMatcher({ jobId, jobTitle }: ResumeMatcherProps) {
+  const [file, setFile] = useState<File | null>(null);
   const [matching, setMatching] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<MatchResults | null>(null);
 
   const handleUpload = async () => {
     if (!file) return;
@@ -38,7 +51,9 @@ export function ResumeMatcher({ jobId, jobTitle }) {
           <input 
             type="file" 
             accept=".pdf" 
-            onChange={(e) => setFile(e.target.files[0])} 
+            onChange={(e) => {
+              if (e.target.files) setFile(e.target.files[0]);
+            }} 
             id="resume-upload"
           />
           <label htmlFor="resume-upload">
