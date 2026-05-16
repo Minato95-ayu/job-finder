@@ -4,45 +4,51 @@ import * as cheerio from "cheerio";
 import logger from "../utils/logger.js";
 import db from "../config/db.js";
 import { generateEmbedding } from "../services/vector.service.js";
+import RedisMock from "ioredis-mock";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+const USE_MOCK_REDIS = process.env.USE_MOCK_REDIS === "true" || process.env.NODE_ENV !== "production";
 
-/**
- * Enterprise Scraper Worker
- * Handles distributed tasks with anti-bot logic
- */
-export const startScraperWorker = () => {
-  const worker = new Worker("scraper-tasks", async (job) => {
-    const { query, location } = job.data;
-    logger.info({ jobId: job.id, query }, "Starting distributed scrape worker");
+export const processScrapeTask = async (job) => {
+  const { query, location } = job.data;
+  logger.info({ query }, "Processing scrape task");
 
-    try {
-      // 1. Fetch with Proxy and Advanced Headers (Anti-bot)
-      const jobs = await fetchJobsWithAntiBot(query, location);
+  try {
+    // 1. Fetch with Proxy and Advanced Headers (Anti-bot)
+    const jobs = await fetchJobsWithAntiBot(query, location);
+    
+    // 2. Process and Ingest
+    for (const rawJob of jobs) {
+      const embedding = await generateEmbedding(`${rawJob.title} ${rawJob.description}`);
       
-      // 2. Process and Ingest
-      for (const rawJob of jobs) {
-        // Generate Vector Embeddings for every job (Enterprise Search)
-        const embedding = await generateEmbedding(`${rawJob.title} ${rawJob.description}`);
-        
-        db.prepare(`
-          INSERT OR REPLACE INTO jobs (id, title, company, description, vector_data)
-          VALUES (?, ?, ?, ?, ?)
-        `).run(rawJob.id, rawJob.title, rawJob.company, rawJob.description, JSON.stringify(embedding));
-      }
-
-      logger.info({ count: jobs.length }, "Scrape task completed successfully");
-    } catch (err) {
-      logger.error(err, "Worker task failed");
-      throw err; // Allow BullMQ to retry
+      db.prepare(`
+        INSERT OR REPLACE INTO jobs (id, title, company, description, vector_data)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(rawJob.id, rawJob.title, rawJob.company, rawJob.description, JSON.stringify(embedding));
     }
-  }, { 
-    connection: { url: REDIS_URL },
-    concurrency: 5 // Enterprise-level parallel processing
-  });
 
-  worker.on("completed", (job) => logger.info(`Job ${job.id} completed`));
-  worker.on("failed", (job, err) => logger.error(`Job ${job.id} failed: ${err.message}`));
+    logger.info({ count: jobs.length }, "Task completed successfully");
+  } catch (err) {
+    logger.error(err, "Task execution failed");
+    throw err;
+  }
+};
+
+export const startScraperWorker = () => {
+  if (process.env.USE_MOCK_REDIS === "true") return; // Skip worker if in mock mode
+
+  try {
+    const connection = { url: REDIS_URL };
+    const worker = new Worker("scraper-tasks", processScrapeTask, { 
+      connection,
+      concurrency: 5 
+    });
+
+    worker.on("completed", (job) => logger.info(`Job ${job.id} completed`));
+    worker.on("failed", (job, err) => logger.error(`Job ${job.id} failed: ${err.message}`));
+  } catch (e) {
+    logger.warn("Worker could not start - likely missing Redis. Fallback active.");
+  }
 };
 
 async function fetchJobsWithAntiBot(query, location) {
